@@ -11,11 +11,11 @@ Clover Games is a cross-platform Minecraft Mini-Games server open to everyone!
 
 -  ☁️ Blog ESCCI (Project virtual) - blog-test.fr
 
-Blog ESCCI is a blog about marketing, tech and the insolite
+Blog ESCCI is a blog about marketing, tech and the insolite!
 
 -  💼 My portfolio - kaysuto.fr
 
-This portfolio is a way to learn about me and maybe we'll work together
+This portfolio is a way to learn about me and maybe we'll work together!
 
 
 <!---
