@@ -1,19 +1,20 @@
 ## 👋 Hi, I’m `@Kaysuto`
 - 👀 I’m interested in development and digital
-- 🌱 I’m currently learning marketing digital
-- 💞️ I’m looking to collaborate on minecraft
-- 📫 How to reach me ➺ `Kaysuto#0012` on discord
+- 🌱 I completed the digital marketing apprenticeship and got a license.
+- 💞️ I’m looking to collaborate!
+- 📫 How to reach me ➺ `Kaysuto#0012` on discord or contact@kaysuto.fr
 
 #### 🚀 Project deployed:
-- 🍀 Clover Games - www.clovergames.fr
+- 🍀 Clover Games 〡 www.clovergames.fr
 
 **Clover Games is a cross-platform Minecraft Mini-Games server open to everyone!**
 
--  ☁️ Blog ESCCI (Project virtual) - blog-test.fr
+-  ☁️ Blog ESCCI (Virtual project : `Off`) - blog-test.fr
 
 **Blog ESCCI is a blog about marketing, tech and the insolite!**
 
--  💼 My portfolio - www.kaysuto.fr
+-  💼 My portfolio 〡 www.kaysuto.fr
+-  🏹 Networks 〡 www.solo.to/kaysuto
 
 **This portfolio is a way to learn about me and maybe we'll work together!**
 
