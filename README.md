@@ -11,7 +11,7 @@
 
 -  ☁️ Blog ESCCI (Virtual project : `Off`) - blog-test.fr
 
-**Blog ESCCI is a blog about marketing, tech and the insolite!**
+**Blog ESCCI is a blog about marketing, tech and insolite!**
 
 -  💼 My portfolio 〡 www.kaysuto.fr
 -  🏹 Networks 〡 www.solo.to/kaysuto
