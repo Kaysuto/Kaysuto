@@ -28,7 +28,7 @@
 This is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 You can click the Preview link to take a look at your changes.
 --->
-<img src="https://user-images.githubusercontent.com/75412305/166241048-e625def7-292b-424f-9738-1217e2ea0f48.gif" width="100px">
+<img src="https://user-images.githubusercontent.com/75412305/166241048-e625def7-292b-424f-9738-1217e2ea0f48.gif" width="1000px">
 
 
 ![I like it](https://user-images.githubusercontent.com/75412305/166241048-e625def7-292b-424f-9738-1217e2ea0f48.gif)
