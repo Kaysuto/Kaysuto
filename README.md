@@ -1,4 +1,4 @@
-## 👋 Hi, I’m `@Kaysuto` ![](https://komarev.com/ghpvc/?username=Kaysuto&color=blue)
+## 👋 Hi, I’m `@Kaysuto` ![](https://komarev.com/ghpvc/?username=Kaysuto&color=blue) <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="25px">
 - 👀 I’m interested in development and digital
 - 🌱 I completed the digital marketing apprenticeship and got a license.
 - 💞️ I’m looking to collaborate!
