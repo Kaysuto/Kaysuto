@@ -4,6 +4,8 @@
 - 💞️ I’m looking to collaborate!
 - 📫 How to reach me ➺ `Kaysuto#0012` on discord or contact@kaysuto.fr
 
+![](https://komarev.com/ghpvc/?Kaysuto=your-github-username&color=blue)
+
 #### 🚀 Project deployed:
 - 🍀 Clover Games 〡 www.clovergames.fr
 
