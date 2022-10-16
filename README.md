@@ -1,10 +1,8 @@
-## 👋 Hi, I’m `@Kaysuto`
+## 👋 Hi, I’m `@Kaysuto` ![](https://komarev.com/ghpvc/?username=Kaysuto&color=blue)
 - 👀 I’m interested in development and digital
 - 🌱 I completed the digital marketing apprenticeship and got a license.
 - 💞️ I’m looking to collaborate!
 - 📫 How to reach me ➺ `Kaysuto#0012` on discord or contact@kaysuto.fr
-
-![](https://komarev.com/ghpvc/?username=Kaysuto&color=blue)
 
 #### 🚀 Project deployed:
 - 🍀 Clover Games 〡 www.clovergames.fr
