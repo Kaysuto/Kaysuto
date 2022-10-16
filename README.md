@@ -22,7 +22,6 @@
 
 ## 🎧 Now I'm listening
 [![Spotify](https://novatorem-kaysuto.vercel.app/api/spotify)](https://open.spotify.com/user/Kaysuto)
-[![spotify-github-profile](https://spotify-github-profile.vercel.app/api/view?uid=Kaysuto&cover_image=true&theme=default&bar_color=53b14f&bar_color_cover=false)](https://spotify-github-profile.vercel.app/api/view?uid=Kaysuto&redirect=true)
 
 
 <!---
