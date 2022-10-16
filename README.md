@@ -9,9 +9,11 @@
 
 **Clover Games is a cross-platform Minecraft Mini-Games server open to everyone!**
 
+
 -  ☁️ Blog ESCCI (Virtual project : `Off`) - blog-test.fr
 
 **Blog ESCCI is a blog about marketing, tech and insolite!**
+
 
 -  💼 My portfolio 〡 www.kaysuto.fr
 -  🏹 Networks 〡 www.solo.to/kaysuto
