@@ -18,6 +18,8 @@
 
 **This portfolio is a way to learn about me and maybe we'll work together!**
 
+[![Spotify](https://novatorem-lake-two.vercel.app/api/spotify)](https://open.spotify.com/user/Kaysuto)
+
 
 <!---
 This is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
