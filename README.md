@@ -18,6 +18,7 @@
 
 **This portfolio is a way to learn about me and maybe we'll work together!**
 
+## 🎧 Now I'm listening
 [![Spotify](https://novatorem-lake-two.vercel.app/api/spotify)](https://open.spotify.com/user/Kaysuto)
 
 
