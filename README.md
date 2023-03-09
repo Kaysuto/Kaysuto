@@ -15,7 +15,8 @@ Titulaire d'un titre professionnel en **marketing digital**, je suis actuellemen
 Mon objectif est d'améliorer les performances et la sécurité des systèmes informatiques en apportant des solutions efficaces et adaptées. Je suis également un fervent défenseur de l'apprentissage continu et j'aime partager mes connaissances avec les autres.
 
 ## 🎧 Actuellement...
-[Spotify](https://novatorem-git-master-kaysuto.vercel.app/api/spotify)](https://open.spotify.com/user/de9dz1nuhvvv7hto5ue7lghhb)
+
+[<img src="https://novatorem-git-master-kaysuto.vercel.app/api/spotify-playing" alt="Kaysuto Spotify Playing" width="350" />](https://open.spotify.com/user/de9dz1nuhvvv7hto5ue7lghhb)
 
 ## 🍩 Tu veux un donut ?
 
