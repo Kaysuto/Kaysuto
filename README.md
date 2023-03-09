@@ -6,9 +6,9 @@ Titulaire d'un titre professionnel en **marketing digital**, je suis actuellemen
 - 📫 Comment me joindre ➺ `Kaysuto#0012` sur Discord ou contact@kaysuto.fr
 
 #### 🚀 Projets déployés :
-- 🍀 [Clover Games](www.clovergames.fr) 〡 **Un serveur multiplateforme de mini-jeux Minecraft ouvert à tous !**
--  💼 [Mon portfolio](www.kaysuto.fr) 〡 **Un moyen de mieux me connaître et peut-être de collaborer ensemble !**
--  🏹 [Mes réseaux](www.solo.to/kaysuto) 〡 **Un endroit pratique qui regroupe tous mes liens en un seul endroit !**
+- 🍀 [Clover Games](https://www.clovergames.fr) 〡 **Un serveur multiplateforme de mini-jeux Minecraft ouvert à tous !**
+-  💼 [Mon portfolio](https://www.kaysuto.fr) 〡 **Un moyen de mieux me connaître et peut-être de collaborer ensemble !**
+-  🏹 [Mes réseaux](https://www.solo.to/kaysuto) 〡 **Un endroit pratique qui regroupe tous mes liens en un seul endroit !**
 
 🌎 **Passionné** et **polyvalent**, j'aime voyager et m'intéresser à une variété d'activités telles que la musique, le sport, les jeux vidéo et les animés de type fantasy.
 
