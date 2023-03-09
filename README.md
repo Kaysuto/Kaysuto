@@ -16,8 +16,7 @@ Mon objectif est d'améliorer les performances et la sécurité des systèmes in
 
 ## 🎧 Actuellement...
 
-[![Spotify](https://novatorem-git-master-kaysuto.vercel.app/api/spotify?background_color=0d1117&border_color=ffffff)](https://open.spotify.com/user/Kaysuto)
-
+[![Spotify](https://novatorem-git-master-kaysuto.vercel.app/api/spotify?background_color=0d1117&border_color=ffffff)](https://open.spotify.com/user/de9dz1nuhvvv7hto5ue7lghhb)
 
 ## 🍩 Tu veux un donut ?
 
