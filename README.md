@@ -17,7 +17,7 @@ En dehors du code, j'adore **voyager** 🌍, écouter de la **musique** 🎧, jo
 
 N'hésitez pas à jeter un oeil à mes repos et à me suivre pour voir mes prochains projets !
 
-## 💪 Compétences Techniques :
+## 💪 Compétences techniques :
 
 <p align="left">
   <a href="https://github.com/Kaysuto">
