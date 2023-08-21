@@ -17,6 +17,10 @@ En dehors du code, j'adore **voyager** 🌍, écouter de la **musique** 🎧, jo
 
 N'hésitez pas à jeter un oeil à mes repos et à me suivre pour voir mes prochains projets !
 
+## Languages I Know:
+
+<p align="left"> <a href="https://github.com/Kaysuto"><img src="https://skillicons.dev/icons?i=vscode,replit,github,mongodb,css,html,js,express,bots,nodejs"> </a> </p>
+
 ## 🎧 Actuellement...
 
 [![Spotify](https://novatorem-git-master-kaysuto.vercel.app/api/spotify?background_color=0d1117&border_color=ffffff)](https://open.spotify.com/user/de9dz1nuhvvv7hto5ue7lghhb)
