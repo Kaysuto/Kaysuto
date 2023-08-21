@@ -17,9 +17,17 @@ En dehors du code, j'adore **voyager** 🌍, écouter de la **musique** 🎧, jo
 
 N'hésitez pas à jeter un oeil à mes repos et à me suivre pour voir mes prochains projets !
 
-## Languages I Know:
+## Compétences Techniques :
 
-<p align="left"> <a href="https://github.com/Kaysuto"><img src="https://skillicons.dev/icons?i=vscode,replit,github,mysql,css,html,js,express,bots,nodejs"> </a> </p>
+<p align="left">
+  <a href="https://github.com/Kaysuto">
+    <img src="https://skillicons.dev/icons?i=js,html,css,php,bootstrap,react,tailwind,nodejs,nextjs,nestjs,nginx,mysql,mongodb,bots" />
+  </a>
+  
+  <a href="https://github.com/Kaysuto">
+    <img src="https://skillicons.dev/icons?i=vscode,github,git,azure,gcp,replit,netlify,cloudflare,pr,ae,xd,figma" />
+  </a>
+</p>
 
 ## 🎧 Actuellement...
 
