@@ -19,7 +19,7 @@ N'hésitez pas à jeter un oeil à mes repos et à me suivre pour voir mes proch
 
 ## Languages I Know:
 
-<p align="left"> <a href="https://github.com/Kaysuto"><img src="https://skillicons.dev/icons?i=vscode,replit,github,mongodb,css,html,js,express,bots,nodejs"> </a> </p>
+<p align="left"> <a href="https://github.com/Kaysuto"><img src="https://skillicons.dev/icons?i=vscode,replit,github,mysql,css,html,js,express,bots,nodejs"> </a> </p>
 
 ## 🎧 Actuellement...
 
