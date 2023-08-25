@@ -1,21 +1,16 @@
 ## <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="25px"> Bonjour, je suis `@Kaysuto` ![](https://komarev.com/ghpvc/?username=Kaysuto&color=blue)
 
-Titulaire d'un titre professionnel en **marketing digital**, je suis actuellement **technicien de data center** et **freelance** expérimenté. 
-Je travaille sur plusieurs projets passionnants en mettant en pratique mes compétences et mon expertise dans le domaine de l'informatique.
+Expert du **marketing digital** et technicien de **data center** aguerri, je suis un **développeur polyvalent** toujours en quête de **nouveaux défis**. Grâce à ma passion pour l'informatique et mon expérience en freelance, je mène à bien des **projets variés** nécessitant flexibilité et expertise technique.
+
+Je consacre beaucoup plus de temps que je ne le devrais aux logiciels **open source**, et c'est là que vous pouvez **trouver** mes contributions.
 
 - 🤝 Je suis à la recherche de collaborations passionnantes !
 - 📫 Comment me joindre ➺ `(Kimiya) Kaysuto#0012` sur Discord ou contact@kaysuto.fr
 
-#### 🚀 Projets déployés :
+#### 🚀 Mes projets :
 - 🍀 [Clover Games](https://www.clovergames.fr) 〢 **Un serveur multiplateforme de mini-jeux Minecraft ouvert à tous !**
 - 💼 [Mon portfolio](https://www.kaysuto.fr) 〢 **Un moyen de mieux me connaître et peut-être de collaborer ensemble !**
 - 🏹 [Mes réseaux](https://www.solo.to/kaysuto) 〢 **Un endroit pratique qui regroupe tous mes liens en un seul endroit !**
-
-Mon objectif est d'améliorer les performances et la sécurité des systèmes informatiques en apportant des solutions efficaces et adaptées.
-
-En dehors du code, j'adore **voyager** 🌍, écouter de la **musique** 🎧, jouer aux **jeux vidéos** 🎮 et regarder des **animés** 🍿.
-
-N'hésitez pas à jeter un oeil à mes repos et à me suivre pour voir mes prochains projets !
 
 ## 💪 Compétences techniques :
 
