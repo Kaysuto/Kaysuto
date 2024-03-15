@@ -1,11 +1,11 @@
 ## <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="25px"> Bonjour, je suis `@Kaysuto` ![](https://komarev.com/ghpvc/?username=Kaysuto&color=blue)
 
-Expert du **marketing digital** et technicien de **data center** aguerri, je suis un **développeur polyvalent** toujours en quête de **nouveaux défis**. Grâce à ma passion pour l'informatique et mon expérience en freelance, je mène à bien des **projets variés** nécessitant flexibilité et expertise technique.
+Expert du **marketing digital** et technicien de **data center** aguerri, je suis un **freelance polyvalent** toujours en quête de **nouveaux défis**. Grâce à ma passion pour l'informatique et mon expérience en freelance, je mène à bien des **projets variés** nécessitant flexibilité et expertise technique.
 
 Je consacre beaucoup plus de temps que je ne le devrais aux logiciels **open source**, et c'est là que vous pouvez **trouver** mes contributions.
 
 - 🤝 Je suis à la recherche de collaborations passionnantes !
-- 📫 Comment me joindre ➺ `(Kimiya) Kaysuto#0012` sur Discord ou contact@kaysuto.fr
+- 📫 Comment me joindre ➺ `(Kimiya) kaysuto` sur Discord ou contact@kaysuto.fr
 
 #### 🚀 Mes projets :
 - 🍀 [Clover Games](https://www.clovergames.fr) 〢 **Un serveur multiplateforme de mini-jeux Minecraft ouvert à tous !**
@@ -33,6 +33,4 @@ Je consacre beaucoup plus de temps que je ne le devrais aux logiciels **open sou
 [Tu veux un donut ?](https://user-images.githubusercontent.com/75412305/196014356-4eda6813-bc61-4e9a-8c57-9e271e97af93.mp4)
 
 <!---
-This is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-You can click the Preview link to take a look at your changes.
---->
+---!>
