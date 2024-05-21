@@ -5,7 +5,7 @@ Expert du **marketing digital** et technicien de **data center** aguerri, je sui
 Je consacre beaucoup plus de temps que je ne le devrais aux logiciels **open source**, et c'est là que vous pouvez **trouver** mes contributions.
 
 - 🤝 Je suis à la recherche de collaborations passionnantes !
-- 📫 Comment me joindre ➺ `(Kimiya) kaysuto` sur Discord ou contact@kaysuto.fr
+- 📫 Comment me joindre ➺ `(Kimiya) kaysuto` sur [Discord](https://discord.gg/Mhe5D5y2) ou contact@kaysuto.fr
 
 #### 🚀 Mes projets :
 - 🍀 [Clover Games](https://www.clovergames.fr) 〢 **Un serveur multiplateforme de mini-jeux Minecraft ouvert à tous !**
