@@ -26,7 +26,7 @@ Je consacre beaucoup plus de temps que je ne le devrais aux logiciels **open sou
 
 ## 🎧 Actuellement...
 
-[![Spotify](https://kaysuto.vercel.app/api/spotify)](https://open.spotify.com/user/de9dz1nuhvvv7hto5ue7lghhb)
+[![Spotify](https://novatorem-git-master-kaysuto.vercel.app//api/spotify)](https://open.spotify.com/user/de9dz1nuhvvv7hto5ue7lghhb)
 
 ## 🍩 Tu veux un donut ?
 
