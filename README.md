@@ -1,8 +1,10 @@
 ## <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="25px"> Bonjour, je suis `@Kaysuto` ![](https://komarev.com/ghpvc/?username=Kaysuto&color=blue)
 
-Expert du **marketing digital** et technicien de **data center** aguerri, je suis un **freelance polyvalent** toujours en quête de **nouveaux défis**. Grâce à ma passion pour l'informatique et mon expérience en freelance, je mène à bien des **projets variés** nécessitant flexibilité et expertise technique.
+Expert du **marketing digital** et technicien de **data center** aguerri, je suis un **freelance polyvalent** toujours en quête de **nouveaux défis**. 
 
-Je consacre beaucoup plus de temps que je ne le devrais aux logiciels **open source**, et c'est là que vous pouvez **trouver** mes contributions.
+Grâce à ma passion pour l'informatique et mon expérience en freelance, je mène à bien des **projets variés** nécessitant flexibilité et expertise technique.
+
+Je consacre beaucoup plus de temps que je ne le devrais aux logiciels **open source** et c'est là que vous pouvez **trouver** mes contributions.
 
 - 🤝 Je suis à la recherche de collaborations passionnantes !
 - 📫 Comment me joindre ➺ `(Kimiya) kaysuto` sur [Discord](https://discord.gg/Mhe5D5y2) ou contact@kaysuto.fr
