@@ -60,21 +60,25 @@
 
 ---
 
-## 🎧 Spotify en écoute
-[![Spotify](https://novatorem-git-master-kaysuto.vercel.app/api/spotify)](https://open.spotify.com/user/de9dz1nuhvvv7hto5ue7lghhb)
+<table>
+  <tr>
+    <td>
+      <!-- Spotify à gauche -->
+      <a href="https://github.com/kittinan/spotify-github-profile">
+        <img src="https://spotify-github-profile.kittinanx.com/api/view?uid=de9dz1nuhvvv7hto5ue7lghhb&cover_image=true&theme=default&show_offline=false&background_color=121212&interchange=false&profanity=false&bar_color=53b14f&bar_color_cover=false" />
+      </a>
+    </td>
+    <td>
+      <!-- Stats à droite, centrées -->
+      <div align="center">
+        <img src="https://github-readme-stats.vercel.app/api?username=Kaysuto&theme=dark&hide_border=false&include_all_commits=true" /><br>
+        <img src="https://nirzak-streak-stats.vercel.app/?user=Kaysuto&theme=dark&hide_border=false" /><br>
+        <img src="https://github-contributor-stats.vercel.app/api?username=Kaysuto&limit=5&theme=dark&combine_all_yearly_contributions=true" />
+      </div>
+    </td>
+  </tr>
+</table>
 
----
-
-## 📈 Stats GitHub
-
-![Stats](https://github-readme-stats.vercel.app/api?username=Kaysuto&theme=dark&hide_border=false&include_all_commits=true)
-![Streak](https://nirzak-streak-stats.vercel.app/?user=Kaysuto&theme=dark&hide_border=false)
-![Contribs](https://github-contributor-stats.vercel.app/api?username=Kaysuto&limit=5&theme=dark&combine_all_yearly_contributions=true)
-
----
-
-## 🍩 Un donut pour la route ?
-[Tu veux un donut ?](https://user-images.githubusercontent.com/75412305/196014356-4eda6813-bc61-4e9a-8c57-9e271e97af93.mp4)
 
 ---
 
