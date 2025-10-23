@@ -16,8 +16,6 @@
 - 💼 **[Portfolio](https://www.kaysuto.fr)** : Découvrez mes réalisations et contact pro.
 - 🍇 **[Jelly](https://dsc.gg/playjelly)** : Plateforme streaming gratuite, sans pub, latence ultra-basse.
 
-📩 **Envie de collaborer ?** Contactez-moi par mail ou réseaux.
-
 ---
 
 ## 😎 Technologies favorites
