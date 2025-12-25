@@ -1,4 +1,4 @@
-# 👋 Bonjour, je suis **`@Kaysuto`**
+# 👋 Hey, je suis **`@Kimiya`**
 ![](https://komarev.com/ghpvc/?username=Kaysuto&color=blue)
 [![Discord](https://img.shields.io/badge/Discord-%237289DA.svg?logo=discord&logoColor=white)](https://discord.gg/AYrvJCA2DW)
 [![Pinterest](https://img.shields.io/badge/Pinterest-%23E60023.svg?logo=Pinterest&logoColor=white)](https://pinterest.com/kaysuto)
@@ -7,7 +7,16 @@
 [![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?logo=YouTube&logoColor=white)](https://youtube.com/@Kaysuto)
 [![email](https://img.shields.io/badge/Email-D14836?logo=gmail&logoColor=white)](mailto:contact@kaysuto.fr)
 
-💡 Je contribue activement à l'open source et mène des projets variés en innovant.
+💡 Je contribue activement à l'open source et mène des projets variés en innovant. 
+
+Tout ici est construit à partir de zéro à l'aide de plusieurs LLMs, sans copier-coller.
+
+---
+
+## 🤪 À propos
+- 🥠 Otaku qui passe trop de temps sur les animés/mangas – https://anilist.co/user/Kaysuto/
+- 🪆 Je construis des trucs simples, utiles et faciles à prendre en main.
+- 😎 Ma source d’énergie préférée : une Monster bien fraîche et ma femme à mes côtés.
 
 ---
 
@@ -18,7 +27,7 @@
 
 ---
 
-## 😎 Technologies favorites
+## 🧰 Technologies favorites
 
 <img alt="Bash Script" src="https://img.shields.io/badge/bash_script-%23121011.svg?style=for-the-badge&amp;logo=gnu-bash&amp;logoColor=white"><img alt="CSS3" src="https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&amp;logo=css3&amp;logoColor=white">
 <img alt="HTML5" src="https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&amp;logo=html5&amp;logoColor=white"><img alt="JavaScript" src="https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&amp;logo=javascript&amp;logoColor=%23F7DF1E">
