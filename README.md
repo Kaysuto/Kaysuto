@@ -15,8 +15,8 @@ Tout ici est construit à partir de zéro à l'aide de plusieurs LLMs, sans copi
 
 ## 🤪 À propos
 - 🥠 Otaku qui passe trop de temps sur les animés/mangas – https://anilist.co/user/Kaysuto/
-- 🪆 Je construis des trucs simples, utiles et faciles à prendre en main.
-- 😎 Ma source d’énergie préférée : une Monster bien fraîche et ma femme à mes côtés.
+- 🪆 Je construis des trucs **simples**, **utiles** et **faciles** à prendre en main.
+- 😎 Ma source d’énergie préférée : une **Monster** bien fraîche et ma **femme** à mes côtés.
 
 ---
 
