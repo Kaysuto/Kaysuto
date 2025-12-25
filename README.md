@@ -57,7 +57,7 @@
   <tr>
     <td>
       <!-- Spotify à gauche -->
-      <a href="https://github.com/kittinan/spotify-github-profile">
+      <a href="https://open.spotify.com/user/de9dz1nuhvvv7hto5ue7lghhb?si=43ffbad494a34bc4">
         <img src="https://spotify-github-profile.kittinanx.com/api/view?uid=de9dz1nuhvvv7hto5ue7lghhb&cover_image=true&theme=default&show_offline=false&background_color=121212&interchange=false&profanity=false&bar_color=53b14f&bar_color_cover=false" />
       </a>
     </td>
