@@ -74,7 +74,7 @@ Tout ici est construit à partir de zéro à l'aide de plusieurs LLMs, sans copi
     <td>
       <!-- Stats à droite, centrées -->
       <div align="center">
-        <img src="https://nirzak-streak-stats.vercel.app/?user=Kaysuto&theme=dark&hide_border=false" /><br>
+        <img src="https://nirzak-streak-stats.vercel.app?user=Kaysuto&theme=dark&locale=fr&short_numbers=true)](https://git.io/streak-stats" /><br>
         <img src="https://github-contributor-stats.vercel.app/api?username=Kaysuto&limit=5&theme=dark&combine_all_yearly_contributions=true" />
       </div>
     </td>
