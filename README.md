@@ -74,8 +74,9 @@ Tout ici est construit à partir de zéro à l'aide de plusieurs LLMs, sans copi
     <td>
       <!-- Stats à droite, centrées -->
       <div align="center">
-        <img src="https://nirzak-streak-stats.vercel.app?user=Kaysuto&theme=dark&locale=fr&short_numbers=true" /><br>
-        <img src="https://github-contributor-stats.vercel.app/api?username=Kaysuto&limit=5&theme=dark&combine_all_yearly_contributions=true" />
+        <img src="https://github-readme-stats-fast.vercel.app/api?username=Kaysuto&show_icons=true&theme=dark" /><br>
+        <img src="https://github-readme-stats-fast.vercel.app/api/streak?username=Kaysuto&theme=dark" /><br>
+        <img src="https://github-readme-stats-fast.vercel.app/api/top-langs/?username=Kaysuto&layout=compact&theme=dark" />
       </div>
     </td>
   </tr>
