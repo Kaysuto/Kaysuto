@@ -28,7 +28,7 @@ Tout ici est construit à partir de zéro à l'aide de plusieurs LLMs, sans copi
 ---
 
 ## 🐍 Commits
-![github contribution grid snake animation](https://raw.githubusercontent.com/Kaysuto/snk/refs/heads/output/github-contribution-grid-snake-dark.svg?token=GHSAT0AAAAAADVADHU663A5DGF7CPBZN5SO2NDNRQQ#gh-dark-mode-only)![github contribution grid snake animation](https://raw.githubusercontent.com/Kaysuto/snk/refs/heads/output/github-contribution-grid-snake.svg?token=GHSAT0AAAAAADVADHU7QKZSXCEOV4WQHNBA2NDNT7Q#gh-light-mode-only)
+![github contribution grid snake animation](https://raw.githubusercontent.com/Kaysuto/snk/refs/heads/output/github-contribution-grid-snake-dark.svg?token=GHSAT0AAAAAADWYUXZKMUSLGYHFQ7POODXK2NNT7JA#gh-dark-mode-only)![github contribution grid snake animation](https://raw.githubusercontent.com/Kaysuto/snk/refs/heads/output/github-contribution-grid-snake.svg?token=GHSAT0AAAAAADWYUXZK75GZKX3D6ESNKMLW2NNT6FA#gh-light-mode-only)
 
 ---
 
