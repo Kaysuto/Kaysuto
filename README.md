@@ -27,11 +27,6 @@ Tout ici est construit à partir de zéro à l'aide de plusieurs LLMs, sans copi
 
 ---
 
-## 🐍 Commits
-![github contribution grid snake animation](https://raw.githubusercontent.com/Kaysuto/snk/refs/heads/output/github-contribution-grid-snake-dark.svg?token=GHSAT0AAAAAADWYUXZKMUSLGYHFQ7POODXK2NNT7JA#gh-dark-mode-only)![github contribution grid snake animation](https://raw.githubusercontent.com/Kaysuto/snk/refs/heads/output/github-contribution-grid-snake.svg?token=GHSAT0AAAAAADWYUXZK75GZKX3D6ESNKMLW2NNT6FA#gh-light-mode-only)
-
----
-
 ## 🧰 Technologies favorites
 
 <img alt="Bash Script" src="https://img.shields.io/badge/bash_script-%23121011.svg?style=for-the-badge&amp;logo=gnu-bash&amp;logoColor=white"><img alt="CSS3" src="https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&amp;logo=css3&amp;logoColor=white">
