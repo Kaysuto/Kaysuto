@@ -21,9 +21,9 @@ Tout ici est construit à partir de zéro à l'aide de plusieurs LLMs, sans copi
 ---
 
 ## 🚀 Projets clés
-- 🍀 **[Clover Games](https://www.clovergames.fr)** : Serveur multiplateforme de mini-jeux Minecraft.
-- 💼 **[Portfolio](https://www.kaysuto.fr)** : Découvrez mes réalisations et contact pro.
-- 🍇 **[Jelly](https://dsc.gg/playjelly)** : Plateforme streaming gratuite, sans pub, latence ultra-basse.
+- 🍀 **[Clover Games](https://clovergames.fr)** : Serveur multiplateforme de mini-jeux Minecraft.
+- 💼 **[Portfolio](https://kaysuto.fr)** : Découvrez mes réalisations et contact pro.
+- 🍇 **[Jelly](https://beta.playjelly.fr)** : Plateforme streaming gratuite, sans pub, latence ultra-basse.
 
 ---
 
