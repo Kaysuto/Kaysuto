@@ -81,11 +81,6 @@ Tout ici est construit à partir de zéro à l'aide de plusieurs LLMs, sans copi
 
 ---
 
-## 💰 Soutiens-moi
-[![Ko-Fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/kaysuto)
-
----
-
 *Merci pour ta visite !*
 
 <p align="center">
