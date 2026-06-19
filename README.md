@@ -9,8 +9,6 @@
 
 💡 Je contribue activement à l'open source et mène des projets variés en innovant. 
 
-Tout ici est construit à partir de zéro à l'aide de plusieurs LLMs, sans copier-coller.
-
 ---
 
 ## 🤪 À propos
