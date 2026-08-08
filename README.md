@@ -8,6 +8,9 @@
 [![email](https://img.shields.io/badge/Email-D14836?logo=gmail&logoColor=white)](mailto:contact@kaysuto.fr)
 
 💡 Je contribue activement à l'open source et mène des projets variés en innovant. 
+---
+
+[![Discord Presence](https://lanyard.cnrad.dev/api/418585879435673610)](https://discord.com/users/418585879435673610)
 
 ---
 
