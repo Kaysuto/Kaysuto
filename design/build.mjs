@@ -283,7 +283,7 @@ ${text('42:17', { x: sx + 24, y: sy + sh - 44, size: 14, font: F.mono, fill: '#f
 <rect x="${sx + 0.5}" y="${sy + 0.5}" width="${sw - 1}" height="${sh - 1}" rx="19.5" fill="none" stroke="#fff" stroke-opacity=".14"/>`;
   const body = `<rect width="800" height="600" fill="url(#glow)"/>
 ${screen}
-${projectCopy({ icon: 'jelly', eyebrow: 'JELLY · BETA', title: ['Streaming', 'sans pub.'], link: 'beta.playjelly.fr ›', linkColor: a, stat: '748', caption: 'commits sur Jelly' })}`;
+${projectCopy({ icon: 'jelly', eyebrow: 'JELLY · BETA', title: ['Streaming', 'sans pub.'], link: 'beta.playjelly.fr ›', linkColor: a, stat: '748+', caption: 'commits sur Jelly' })}`;
   // Slow zoom on the film still; playback keeps going: the fill (150 wide) grows 1.8× in a minute and the knob follows.
   const style = motion(`.kb{transform-origin:${sx + sw / 2}px ${sy + sh / 2}px;animation:kb 24s ease-in-out infinite alternate}
 .p{transform-origin:${sx + 24}px 0;animation:play 60s linear infinite}
@@ -336,35 +336,57 @@ ${rows}`;
   return card(400, 600, body, { defs, style });
 }
 
-// What the projects are really built with, read from their package.json / pom.xml on 2026-10-21.
+// The stack, ranked by depth like on kaysuto.fr (its 45 technologies), plus the tools of the original
+// profile README and the projects (Java, Rust, Discord.js). A string is a Lucide glyph, for tools Simple Icons lacks.
 const SKILLS = [
-  ['FRONT-END', [[si.siTypescript, 'TypeScript'], [si.siReact, 'React'], [si.siNextdotjs, 'Next.js'], [si.siTailwindcss, 'Tailwind CSS']]],
-  ['BACK & DONNÉES', [[si.siSupabase, 'Supabase'], [si.siPostgresql, 'PostgreSQL'], [si.siMysql, 'MySQL'], [si.siStripe, 'Stripe']]],
-  ['JEU & APPS', [[si.siOpenjdk, 'Java · Paper'], [si.siTauri, 'Rust · Tauri'], [si.siDiscorddotjs, 'Discord.js'], [si.siNodedotjs, 'Node.js']]],
-  ['INFRA & DEVOPS', [[si.siDocker, 'Docker'], [si.siPterodactyl, 'Pterodactyl'], [si.siProxmox, 'Proxmox'], [si.siNginx, 'Nginx']]],
+  ['L1', 'Front-end', [[si.siTypescript, 'TypeScript'], [si.siReact, 'React'], [si.siNextdotjs, 'Next.js'], [si.siVuedotjs, 'Vue.js'], [si.siVite, 'Vite'], [si.siTailwindcss, 'Tailwind CSS'], [si.siShadcnui, 'shadcn/ui'], [si.siTanstack, 'TanStack']]],
+  ['L2', 'Back & données', [[si.siNodedotjs, 'Node.js'], [si.siPython, 'Python'], [si.siPhp, 'PHP'], [si.siSupabase, 'Supabase'], [si.siPostgresql, 'PostgreSQL'], [si.siMysql, 'MySQL'], [si.siSqlite, 'SQLite'], [si.siRedis, 'Redis'], [si.siDrizzle, 'Drizzle ORM'], [si.siBetterauth, 'Better Auth'], [si.siSocketdotio, 'Sockets'], [si.siStripe, 'Stripe']]],
+  ['L3', 'Hébergement', [[si.siVercel, 'Vercel'], [si.siCloudflare, 'Cloudflare'], [si.siInfomaniak, 'Infomaniak'], [si.siCoolify, 'Coolify'], [si.siPterodactyl, 'Pterodactyl'], ['server', 'Pelican'], [si.siBrevo, 'Brevo']]],
+  ['L4', 'Infra & réseau', [[si.siLinux, 'Linux'], [si.siDocker, 'Docker'], [si.siProxmox, 'Proxmox'], [si.siVmware, 'VMware'], [si.siNginx, 'Nginx'], [si.siApache, 'Apache'], ['shield-ban', 'Fail2Ban'], [si.siTailscale, 'Tailscale'], [si.siWireguard, 'WireGuard'], ['network', 'NetBird']]],
+  ['L5', 'Supervision & outils', [[si.siGrafana, 'Grafana'], [si.siPrometheus, 'Prometheus'], [si.siGithubactions, 'GitHub Actions'], [si.siGit, 'Git'], [si.siGnubash, 'Bash'], [si.siObsidian, 'Obsidian'], [si.siBitwarden, 'Bitwarden'], [si.siKeepassxc, 'KeePassXC']]],
+  ['L6', 'Jeu & apps', [[si.siOpenjdk, 'Java · Paper'], [si.siTauri, 'Rust · Tauri'], [si.siDiscorddotjs, 'Discord.js']]],
 ];
-const SKILLS_SUB = 'Du site au serveur de jeu, tout tourne en production.';
+const SKILLS_SUB = 'Rangée par profondeur, de l’interface aux serveurs qui la font tourner.';
 
-// Full-width card: four columns, one per domain, each a list of logo tiles.
+// A tool pill: logo (or Lucide glyph) and name. Returns its width so rows can wrap.
+function toolPill([icon, label], x, y) {
+  const w = 44 + measure(label, { size: 15, font: F.semi }) + 14;
+  const mark = typeof icon === 'string' ? lucide(icon, x + 12, y + 10, 16, C.secondary) : logo(icon, x + 20, y + 18, 16);
+  return { w, svg: `<rect x="${r1(x)}" y="${y}" width="${r1(w)}" height="36" rx="10" fill="${C.tile}" fill-opacity=".8" stroke="${C.border}"/>
+${mark}
+${text(label, { x: x + 38, y: y + 23.5, size: 15, font: F.semi })}` };
+}
+
+// Full-width card: one strata per row, its name on the left and its tools wrapping on the right.
 function skills() {
-  const w = 1200, h = 560, col = (w - 2 * X) / SKILLS.length, bd = backdrop(w, h, w - 120, 0, 620);
-  const defs = `${bd.defs}\n${radial('glow', w - 120, 0, 560, [[0, C.accent, 0.14], [1, C.accent, 0]])}`;
-  const cols = SKILLS.map(([eyebrow, tools], c) => {
-    const x = X + c * col;
-    return [mono(eyebrow, { x, y: 236 }),
-      ...tools.map(([icon, label], i) => {
-        const y = 260 + i * 62; // the last tile ends on the bottom padding (496)
-        return `<rect x="${x}" y="${y}" width="48" height="48" rx="12" fill="${C.tile}"/>
-<rect x="${x + 0.5}" y="${y + 0.5}" width="47" height="47" rx="11.5" fill="none" stroke="${C.border}"/>
-${logo(icon, x + 24, y + 24, 24)}
-${text(label, { x: x + 64, y: y + 31, size: 20, font: F.semi })}`;
-      })].join('\n');
+  const w = 1200, lx = X + 250, rx = w - X, top = 212;
+  let y = top;
+  const layers = SKILLS.map(([id, name, tools], i) => {
+    const y0 = y;
+    let px = lx, py = y0;
+    const pills = tools.map(tool => {
+      const pw = toolPill(tool, 0, 0).w;
+      if (px + pw > rx) { px = lx; py += 46; }
+      const p = toolPill(tool, px, py);
+      px += pw + 8;
+      return p.svg;
+    }).join('\n');
+    y = py + 36 + 26;
+    return `${i ? `<rect x="${X}" y="${y0 - 14}" width="${w - 2 * X}" height="1" fill="${C.border}"/>` : ''}
+${mono(id, { x: X, y: y0 + 24, size: 15, fill: C.accent })}
+${text(name, { x: X + 40, y: y0 + 24, size: 20, font: F.semi, tracking: -0.01 })}
+${mono(String(tools.length).padStart(2, '0'), { x: X + 40, y: y0 + 48, size: 13 })}
+${pills}`;
   }).join('\n');
+  const h = y - 26 + PAD + M, count = SKILLS.reduce((n, [, , t]) => n + t.length, 0);
+  const bd = backdrop(w, h, w - 120, 0, 620);
+  const defs = `${bd.defs}\n${radial('glow', w - 120, 0, 560, [[0, C.accent, 0.14], [1, C.accent, 0]])}`;
   const body = `${bd.body}
 <rect width="${w}" height="${h}" fill="url(#glow)"/>
 ${twoTone([['Ce que je ', C.text], ['maîtrise.', C.accent]], { x: X, y: 120, size: 50, tracking: -0.03 }).svg}
+${mono(`${count} TECHNOLOGIES · ${SKILLS.length} STRATES`, { x: rx, y: 118, size: 14, anchor: 'end' })}
 ${text(SKILLS_SUB, { x: X, y: 160, size: 22, font: F.medium, fill: C.secondary })}
-${cols}`;
+${layers}`;
   return card(w, h, body, { defs });
 }
 
@@ -418,11 +440,12 @@ for (const [name, make] of Object.entries(CARDS)) writeFileSync(new URL(`${name}
 let over = 0;
 const fits = (label, right, limit) => { if (right > limit) { over++; console.log(`OVER ${label}: ${Math.round(right)} / ${limit}`); } };
 for (const line of ['Serveur', 'Minecraft.', 'Streaming', 'sans pub.']) fits(line, X + measure(line, { size: 50, font: F.semi, tracking: -0.03 }), 420);
+fits('748+', X - 5 + measure('748+', { size: 168, font: F.semi, tracking: -0.05 }), 460);
 fits('clover caption', X + measure('modes, Java & Bedrock', { size: 22 }), 420);
 fits('Mes commits.', X + measure('Mes commits.', { size: 40, font: F.semi, tracking: -0.025 }), 400 - X);
 for (const [label] of COMMITS) fits(label, X + 48 + measure(label, { size: 19, font: F.semi }), 400 - X - 44);
 fits(SKILLS_SUB, X + measure(SKILLS_SUB, { size: 22 }), 1200 - X);
-for (const [, tools] of SKILLS) for (const [, label] of tools) fits(label, 64 + measure(label, { size: 20, font: F.semi }), (1200 - 2 * X) / SKILLS.length - 16);
+for (const [, name] of SKILLS) fits(name, X + 40 + measure(name, { size: 20, font: F.semi, tracking: -0.01 }), X + 236);
 for (const [label, sub] of ABOUT) fits(sub, X + 54 + measure(sub, { size: 15 }), 400 - X), fits(label, X + 54 + measure(label, { size: 19, font: F.semi }), 400 - X);
 for (const { title, link, eyebrow } of Object.values(SMALL)) {
   for (const line of title) fits(line, X + measure(line, { size: 32, font: F.semi, tracking: -0.025 }), 400 - X);
