@@ -9,7 +9,7 @@ import * as si from 'simple-icons';
 
 // kaysuto.fr, html[data-palette="cafe"].dark, converted from oklch.
 const C = {
-  card: ['#1f1510', '#170f0b'], tile: '#2a1e18', border: '#46352c',
+  card: ['#120c09', '#0a0604'], tile: '#1e1510', border: '#33261f',
   text: '#f5f1ea', secondary: '#bfac98', tertiary: '#97836f', accent: '#d5b89c',
 };
 const G = {
@@ -195,12 +195,12 @@ function hero() {
     // Daylight on the planet: only the arc under the sun is lit, fading into the night side.
     `<radialGradient id="day" cx="${cx}" cy="${hy}" r="560" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 ${hy}) scale(1 .3) translate(0 ${-hy})"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>`,
     `<mask id="daymask"><rect width="${w}" height="${h}" fill="url(#day)"/></mask>`,
-    `<radialGradient id="ground" cx="${cx}" cy="${hy}" r="620" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 ${hy}) scale(1 .35) translate(0 ${-hy})"><stop offset="0" stop-color="#5a3a24"/><stop offset=".35" stop-color="#241710"/><stop offset="1" stop-color="#0b0705"/></radialGradient>`,
+    `<radialGradient id="ground" cx="${cx}" cy="${hy}" r="620" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 ${hy}) scale(1 .35) translate(0 ${-hy})"><stop offset="0" stop-color="#3a2617"/><stop offset=".35" stop-color="#160e09"/><stop offset="1" stop-color="#060403"/></radialGradient>`,
     // Atmosphere: blue at the edges, warming to gold and white where the sun crosses it.
     `<linearGradient id="air" x1="0" y1="0" x2="${w}" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5b8fc7" stop-opacity="0"/><stop offset=".2" stop-color="#5b8fc7" stop-opacity=".55"/><stop offset=".4" stop-color="#ffb35c" stop-opacity=".9"/><stop offset=".5" stop-color="#fff4e2"/><stop offset=".6" stop-color="#ffb35c" stop-opacity=".9"/><stop offset=".8" stop-color="#5b8fc7" stop-opacity=".55"/><stop offset="1" stop-color="#5b8fc7" stop-opacity="0"/></linearGradient>`,
     `<linearGradient id="hot" x1="0" y1="0" x2="${w}" y2="0" gradientUnits="userSpaceOnUse"><stop offset=".08" stop-color="#fff3e3" stop-opacity="0"/><stop offset=".3" stop-color="#fff3e3" stop-opacity=".9"/><stop offset=".5" stop-color="#fffaf2"/><stop offset=".7" stop-color="#ffe0b8" stop-opacity=".9"/><stop offset=".92" stop-color="#ffe0b8" stop-opacity="0"/></linearGradient>`,
-    `<radialGradient id="haze" cx="${cx}" cy="${sy}" r="560" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffcf8a" stop-opacity=".55"/><stop offset=".25" stop-color="#fba541" stop-opacity=".22"/><stop offset=".6" stop-color="#c5a88d" stop-opacity=".06"/><stop offset="1" stop-color="#c5a88d" stop-opacity="0"/></radialGradient>`,
-    `<radialGradient id="corona" cx="${cx}" cy="${sy}" r="140" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset=".18" stop-color="#fffaf0" stop-opacity=".95"/><stop offset=".45" stop-color="#ffd59a" stop-opacity=".35"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>`,
+    `<radialGradient id="haze" cx="${cx}" cy="${sy}" r="560" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffcf8a" stop-opacity=".32"/><stop offset=".25" stop-color="#fba541" stop-opacity=".1"/><stop offset=".6" stop-color="#c5a88d" stop-opacity=".02"/><stop offset="1" stop-color="#c5a88d" stop-opacity="0"/></radialGradient>`,
+    `<radialGradient id="corona" cx="${cx}" cy="${sy}" r="140" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset=".14" stop-color="#fffaf0" stop-opacity=".8"/><stop offset=".4" stop-color="#ffd59a" stop-opacity=".2"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>`,
     linear('title', G.sand, [0, 0, 0, 1]),
     blur('md', 10), blur('sm', 2.5), blur('lg', 22),
     // The animated beam is blurred within the horizon band only, so each frame stays cheap.
@@ -220,8 +220,8 @@ ${planet(' fill="none" stroke="url(#air)" stroke-width="1.6"')}
 ${beam(' stroke-width="12" opacity=".7" filter="url(#band)"')}
 ${beam(' stroke-width="2"')}
 <g class="sun">
-<ellipse cx="${cx}" cy="${sy}" rx="560" ry="2.4" fill="#fff4e2" opacity=".6" filter="url(#sm)"/>
-<ellipse cx="${cx}" cy="${sy}" rx="340" ry="12" fill="#ffcf8a" opacity=".25" filter="url(#md)"/>
+<ellipse cx="${cx}" cy="${sy}" rx="560" ry="2.4" fill="#fff4e2" opacity=".4" filter="url(#sm)"/>
+<ellipse cx="${cx}" cy="${sy}" rx="340" ry="12" fill="#ffcf8a" opacity=".14" filter="url(#md)"/>
 <circle cx="${cx}" cy="${sy}" r="140" fill="url(#corona)"/>
 <circle cx="${cx}" cy="${sy}" r="15" fill="#fff"/>
 </g>
@@ -396,7 +396,7 @@ const SKILLS_SUB = 'Testés au quotidien sur mes propres projets.';
 function skills() {
   const w = 1200, h = 560, col = (w - 2 * X) / SKILLS.length, bd = backdrop(w, h, w - 120, 0, 620);
   const defs = `${bd.defs}
-${radial('glow', w - 120, 0, 560, [[0, C.accent, 0.14], [1, C.accent, 0]])}`;
+${radial('glow', w - 120, 0, 560, [[0, C.accent, 0.07], [1, C.accent, 0]])}`;
   const cols = SKILLS.map(([eyebrow, tools], c) => {
     const x = X + c * col;
     return [mono(eyebrow, { x, y: 236 }),
@@ -445,7 +445,7 @@ ${mono(label, { x: X + i * col, y: 268, size: 13, tracking: 0.12 })}`).join('\n'
     return `<rect x="${r1(x)}" y="${y}" width="${cell}" height="${cell}" rx="4" fill="${HEAT[level(n)]}"/>`;
   }).join('')).join('\n');
   const legend = HEAT.map((c, i) => `<rect x="${w - X - 52 - (HEAT.length - i) * 20}" y="${h - M - PAD - 13}" width="${cell}" height="${cell}" rx="4" fill="${c}"/>`).join('');
-  const defs = `${linear('hot', ['#ffd27a', '#fba541'])}\n${radial('glow', 120, 0, 560, [[0, C.accent, 0.12], [1, C.accent, 0]])}`;
+  const defs = `${linear('hot', ['#ffd27a', '#fba541'])}\n${radial('glow', 120, 0, 560, [[0, C.accent, 0.07], [1, C.accent, 0]])}`;
   const body = `<rect width="${w}" height="${h}" fill="url(#glow)"/>
 ${twoTone([['Mon ', C.text], ['activité.', C.accent]], { x: X, y: 120, size: 50, tracking: -0.03 }).svg}
 ${mono(`MIS À JOUR LE ${d}.${m}.${year}`, { x: w - X, y: 118, size: 13, tracking: 0.12, anchor: 'end' })}
