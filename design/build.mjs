@@ -20,7 +20,7 @@ const G = {
   nohello: ['#9cc9ff', '#4f8fea'],
   portfolio: ['#f6e6d2', '#fba541'],
 };
-const GAP = 24, RADIUS = 30, PAD = 52;
+const GAP = 24, RADIUS = 17, PAD = 52; // shadcn/ui Mira, as on kaysuto.fr: cards rounded-lg (12 px), inner pieces rounded-md (8 px); 1 unit ≈ 0.7 px on GitHub
 const M = GAP / 2; // each image carries half the gutter, so cards line up without CSS
 const X = M + PAD;
 
@@ -137,7 +137,7 @@ ${defs}
 ${body}
 <rect x="${M + r}" y="${M}" width="${cw - 2 * r}" height="1" fill="#fff" fill-opacity=".07"/>
 </g>
-<rect x="${M + 0.5}" y="${M + 0.5}" width="${cw - 1}" height="${ch - 1}" rx="${r - 0.5}" fill="none" stroke="${C.border}"/>
+<rect x="${M + 0.5}" y="${M + 0.5}" width="${cw - 1}" height="${ch - 1}" rx="${r - 0.5}" fill="none" stroke="${C.text}" stroke-opacity=".1"/>
 </svg>
 `;
 }
@@ -266,9 +266,9 @@ const CLOVER_PARTS = [['puzzle', 'Plugin'], ['monitor-down', 'Launcher'], ['glob
 // One tile of the Clover visual: icon on a tinted square, then the label.
 function cloverTile(x, y, w, h, icon, label, { color, dim = false, delay = 0 } = {}) {
   const box = h - 24;
-  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="16" fill="${C.tile}" fill-opacity="${dim ? 0.3 : 0.7}"/>
-<rect x="${x + 0.5}" y="${y + 0.5}" width="${w - 1}" height="${h - 1}" rx="15.5" fill="none" stroke="${C.border}"${dim ? ' stroke-dasharray="5 5"' : ''}/>
-<rect${dim ? '' : ' class="pip"'} x="${x + 12}" y="${y + 12}" width="${box}" height="${box}" rx="10" fill="${color}" fill-opacity="${dim ? 0.06 : 0.14}" style="animation-delay:${delay}s"/>
+  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="${C.tile}" fill-opacity="${dim ? 0.3 : 0.7}"/>
+<rect x="${x + 0.5}" y="${y + 0.5}" width="${w - 1}" height="${h - 1}" rx="11.5" fill="none" stroke="${C.border}"${dim ? ' stroke-dasharray="5 5"' : ''}/>
+<rect${dim ? '' : ' class="pip"'} x="${x + 12}" y="${y + 12}" width="${box}" height="${box}" rx="8" fill="${color}" fill-opacity="${dim ? 0.06 : 0.14}" style="animation-delay:${delay}s"/>
 ${lucide(icon, x + 12 + box / 2 - 10, y + 12 + box / 2 - 10, 20, dim ? C.tertiary : color)}
 ${text(label, { x: x + 24 + box, y: y + h / 2 + 6.5, size: 18, font: F.semi, fill: dim ? C.tertiary : C.text })}`;
 }
@@ -303,7 +303,7 @@ function jelly() {
     radial('glow', 760, 600, 420, [[0, a, 0.16], [1, a, 0]]),
     linear('sky', ['#0f4a47', '#08202b'], [0, 0, 0, 1]),
     '<linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".75"/></linearGradient>',
-    `<clipPath id="screen"><rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" rx="20"/></clipPath>`,
+    `<clipPath id="screen"><rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" rx="12"/></clipPath>`,
     blur('moon', 14),
   ].join('\n');
   // A stylised film still: sky, moon, two mountain ranges, a subtitle and the progress bar.
@@ -325,7 +325,7 @@ ${text('42:17', { x: sx + 24, y: sy + sh - 44, size: 14, font: F.mono, fill: '#f
 <rect class="p" x="${sx + 24}" y="${sy + sh - 32}" width="150" height="5" rx="2.5" fill="url(#bar)"/>
 <circle class="k" cx="${sx + 174}" cy="${sy + sh - 29.5}" r="8" fill="#fff"/>
 </g>
-<rect x="${sx + 0.5}" y="${sy + 0.5}" width="${sw - 1}" height="${sh - 1}" rx="19.5" fill="none" stroke="#fff" stroke-opacity=".14"/>`;
+<rect x="${sx + 0.5}" y="${sy + 0.5}" width="${sw - 1}" height="${sh - 1}" rx="11.5" fill="none" stroke="#fff" stroke-opacity=".14"/>`;
   const body = `<rect width="800" height="600" fill="url(#glow)"/>
 ${screen}
 ${projectCopy({ icon: 'jelly', eyebrow: 'JELLY · BETA', title: ['Streaming', 'sans pub.'], link: 'beta.playjelly.fr ›', linkColor: a, stat: '748+', caption: 'commits sur Jelly' })}`;
