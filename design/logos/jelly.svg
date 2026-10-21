@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+  <defs>
+    <mask id="ring">
+      <rect width="160" height="160" fill="#000"/>
+      <rect x="28" y="28" width="104" height="104" rx="29" fill="#fff" transform="rotate(45 80 80)"/>
+      <rect x="54" y="54" width="52" height="52" rx="15" fill="#000" transform="rotate(45 80 80)"/>
+    </mask>
+    <clipPath id="top"><path d="M0 0h160v72L0 88Z"/></clipPath>
+    <clipPath id="bottom"><path d="M0 98l160-16v78H0Z"/></clipPath>
+  </defs>
+  <g clip-path="url(#top)"><rect width="160" height="160" fill="#F6F6F7" mask="url(#ring)"/></g>
+  <g clip-path="url(#bottom)"><rect width="160" height="160" fill="#00716D" mask="url(#ring)"/></g>
+</svg>

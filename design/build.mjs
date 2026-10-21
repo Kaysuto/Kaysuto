@@ -1,7 +1,7 @@
 // Builds the profile images (../assets/*.svg). Run: npm run build
-// Style: the "café" palette of kaysuto.fr (warm espresso, ivory text, sand accent), Geist for text,
-// Geist Mono for labels and figures, two-tone headlines, hairline borders, dot grid and grain.
-// Text is converted to outlines, so the images look the same everywhere, with no font installed.
+// Bento cards (big gradient figures, illustrated visuals, horizon header) dressed in the "café" style
+// of kaysuto.fr: warm espresso, ivory text, sand accent, Geist for text and Geist Mono for labels,
+// two-tone titles. Text is converted to outlines, so the images look the same everywhere.
 // Fonts in design/fonts are copied from node_modules/geist/dist/fonts: Geist-SemiBold, Geist-Medium, GeistMono-Medium.
 import * as hb from 'harfbuzzjs';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -9,11 +9,18 @@ import * as si from 'simple-icons';
 
 // kaysuto.fr, html[data-palette="cafe"].dark, converted from oklch.
 const C = {
-  bg: ['#1f1510', '#170f0b'], panel: '#241913', border: '#46352c',
-  text: '#f5f1ea', muted: '#bfac98', dim: '#97836f', accent: '#d5b89c',
-  green: '#52a96c', gold: '#deb516', orange: '#fba541', jelly: '#3ab0a4',
+  card: ['#1f1510', '#170f0b'], tile: '#2a1e18', border: '#46352c',
+  text: '#f5f1ea', secondary: '#bfac98', tertiary: '#97836f', accent: '#d5b89c',
 };
-const GAP = 24, RADIUS = 22, PAD = 48;
+const G = {
+  sand: ['#f6e6d2', '#c5a88d'],
+  clover: ['#9be38f', '#52a96c'],
+  jelly: ['#5eead4', '#38bdf8'],
+  mirum: ['#ffd27a', '#deb516'],
+  nohello: ['#9cc9ff', '#4f8fea'],
+  portfolio: ['#f6e6d2', '#fba541'],
+};
+const GAP = 24, RADIUS = 30, PAD = 52;
 const M = GAP / 2; // each image carries half the gutter, so cards line up without CSS
 const X = M + PAD;
 
@@ -42,7 +49,7 @@ function shape(font, str, size, tracking) {
 
 const measure = (str, { size, font = F.medium, tracking = 0 }) => shape(font, str, size, tracking).width;
 
-// One line of text → a single <path>.
+// One line of text → a single <path>, so a gradient spans the whole line.
 function text(str, { x, y, size, font = F.medium, tracking = 0, anchor = 'start', fill = C.text, extra = '' }) {
   const { glyphs, k, width } = shape(font, str, size, tracking);
   const x0 = anchor === 'middle' ? x - width / 2 : anchor === 'end' ? x - width : x;
@@ -51,8 +58,8 @@ function text(str, { x, y, size, font = F.medium, tracking = 0, anchor = 'start'
   return `<path d="${d}" fill="${fill}"${extra}/>`;
 }
 
-// Two-tone line, as on kaysuto.fr: "Ma stack", the last word in sand.
-function twoTone(parts, { x, y, size, font = F.semi, tracking = -0.03, anchor = 'start' }) {
+// Two-tone line, as on kaysuto.fr: "Ce que je maîtrise", the last part in sand.
+function twoTone(parts, { x, y, size, font = F.semi, tracking = -0.025, anchor = 'start' }) {
   const widths = parts.map(([str]) => measure(str, { size, font, tracking }) + tracking * size);
   const total = widths.reduce((a, b) => a + b, 0) - tracking * size;
   let pen = anchor === 'middle' ? x - total / 2 : anchor === 'end' ? x - total : x;
@@ -62,15 +69,22 @@ function twoTone(parts, { x, y, size, font = F.semi, tracking = -0.03, anchor = 
   };
 }
 
-const mono = (str, opts) => text(str, { size: 14, font: F.mono, tracking: 0.14, fill: C.dim, ...opts });
+const mono = (str, opts) => text(str, { size: 15, font: F.mono, tracking: 0.14, fill: C.tertiary, ...opts });
 const linear = (id, stops, [x1, y1, x2, y2] = [0, 0, 1, 0]) =>
-  `<linearGradient id="${id}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${stops.map(([o, c, a = 1]) =>
-    `<stop offset="${o}" stop-color="${c}" stop-opacity="${a}"/>`).join('')}</linearGradient>`;
+  `<linearGradient id="${id}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${stops.map((c, i) =>
+    `<stop offset="${i / (stops.length - 1)}" stop-color="${c}"/>`).join('')}</linearGradient>`;
 const radial = (id, cx, cy, r, stops) =>
   `<radialGradient id="${id}" cx="${cx}" cy="${cy}" r="${r}" gradientUnits="userSpaceOnUse">${stops.map(([o, c, a]) =>
     `<stop offset="${o}" stop-color="${c}" stop-opacity="${a}"/>`).join('')}</radialGradient>`;
+const blur = (id, s) => `<filter id="${id}" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="${s}"/></filter>`;
 
-// Dark brand colours fade into the panel: black logos turn white, deep colours get tinted towards white.
+const svgInner = path => {
+  const svg = readFileSync(new URL(path, import.meta.url), 'utf8');
+  return svg.slice(svg.indexOf('>', svg.indexOf('<svg')) + 1, svg.lastIndexOf('</svg>'));
+};
+const lucide = (name, x, y, size, color) =>
+  `<g transform="translate(${x} ${y}) scale(${size / 24})" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${svgInner(`./node_modules/lucide-static/icons/${name}.svg`)}</g>`;
+// Dark brand colours fade into the tile: black logos turn ivory, deep colours get tinted towards white.
 function onDark(hex) {
   const rgb = [0, 2, 4].map(i => parseInt(hex.slice(i, i + 2), 16));
   const l = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
@@ -78,246 +92,336 @@ function onDark(hex) {
   if (l >= 120) return `#${hex}`;
   return `rgb(${rgb.map(c => Math.round(c + (255 - c) * 0.45)).join(',')})`;
 }
-const logo = (icon, x, y, size) =>
-  `<path transform="translate(${x} ${y}) scale(${size / 24})" d="${icon.path}" fill="${onDark(icon.hex)}"/>`;
-const webp = file => `data:image/webp;base64,${readFileSync(new URL(`./images/${file}`, import.meta.url)).toString('base64')}`;
+const logo = (icon, cx, cy, size) =>
+  `<path transform="translate(${cx - size / 2} ${cy - size / 2}) scale(${size / 24})" d="${icon.path}" fill="${onDark(icon.hex)}"/>`;
+const png = path => `data:image/png;base64,${readFileSync(new URL(path, import.meta.url)).toString('base64')}`;
 
-// Outlined pill (tags, tools, status). Returns its width so rows can be laid out.
-function pill(label, x, y, { icon, dot, h = 34, size = 15, font = F.medium, color = C.muted, fill = C.panel, tracking = 0 } = {}) {
-  const pad = 14, gap = icon || dot ? (icon ? 24 : 16) : 0, w = pad * 2 + gap + measure(label, { size, font, tracking });
-  const cy = y + h / 2;
-  return {
-    width: w,
-    svg: `<rect x="${x}" y="${y}" width="${r1(w)}" height="${h}" rx="${h / 2 > 12 ? 10 : h / 2}" fill="${fill}" stroke="${C.border}"/>
-${icon ? logo(icon, x + pad, cy - 8, 16) : ''}${dot ? `<circle cx="${x + pad + 4}" cy="${cy}" r="4" fill="${dot}"/>` : ''}
-${text(label, { x: x + pad + gap, y: cy + size * 0.36, size, font, tracking, fill: color })}`,
-  };
-}
-const pillRow = (items, x, y, opts) => {
-  let pen = x;
-  return items.map(([label, icon]) => { const p = pill(label, pen, y, { ...opts, icon }); pen += p.width + 10; return p.svg; }).join('\n');
+// App icons: the project's own mark where it has one, otherwise a Lucide glyph on its colour.
+const MARKS = {
+  // Jelly: 160 × 160 viewBox, ids prefixed so they cannot clash with the card's own.
+  jelly: { tile: '#0b1b1f', inner: s => `<g transform="scale(${r1(s / 160 * 1e4) / 1e4})">${svgInner('./logos/jelly.svg').replace(/id="([\w-]+)"/g, 'id="jl-$1"').replace(/url\(#([\w-]+)\)/g, 'url(#jl-$1)')}</g>`, scale: 34 / 44 },
+  clover: { tile: '#0f2416', inner: s => `<image width="${s}" height="${s}" href="${png('./logos/clover.png')}" style="image-rendering:pixelated"/>`, scale: 34 / 44 },
+  portfolio: { tile: C.tile, inner: s => `<g transform="scale(${s / 64})">${svgInner('./logos/portfolio.svg')}</g>`, scale: 1 },
+  mirum: { tile: '#2a1d05', glyph: ['swords', G.mirum[0]] },
+  nohello: { tile: '#0b1a2e', glyph: ['message-circle-off', G.nohello[0]] },
 };
+function appIcon(name, x, y, size = 44) {
+  const { tile, inner, scale = 1, glyph } = MARKS[name];
+  const s = size * scale, inset = (size - s) / 2;
+  const mark = glyph ? lucide(glyph[0], x + size / 2 - 12, y + size / 2 - 12, 24, glyph[1])
+    : `<clipPath id="ic-${name}"><rect x="${x}" y="${y}" width="${size}" height="${size}" rx="${size / 4}"/></clipPath><g clip-path="url(#ic-${name})"><g transform="translate(${r1(x + inset)} ${r1(y + inset)})">${inner(s)}</g></g>`;
+  return `<rect x="${x}" y="${y}" width="${size}" height="${size}" rx="${size / 4}" fill="${tile}"/>
+${mark}
+<rect x="${x + 0.5}" y="${y + 0.5}" width="${size - 1}" height="${size - 1}" rx="${size / 4 - 0.5}" fill="none" stroke="#fff" stroke-opacity=".12"/>`;
+}
 
-// Motion: slow loops whose first frame is the finished design (images may be shown frozen).
+// Motion: slow ambient loops whose first frame is the finished design. Images can be shown with a
+// frozen timeline (hidden tabs, previews), so no animation may start from a hidden state.
 const motion = rules => `${rules}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}`;
 
 // Card: espresso background, hairline border, faint highlight on the top edge.
 function card(w, h, body, { defs = '', style = '' } = {}) {
-  const cw = w - 2 * M, ch = h - 2 * M;
+  const cw = w - 2 * M, ch = h - 2 * M, r = RADIUS;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
 <defs>
-<clipPath id="clip"><rect x="${M}" y="${M}" width="${cw}" height="${ch}" rx="${RADIUS}"/></clipPath>
-${linear('fill', [[0, C.bg[0]], [1, C.bg[1]]], [0, 0, 0, 1])}
+<clipPath id="clip"><rect x="${M}" y="${M}" width="${cw}" height="${ch}" rx="${r}"/></clipPath>
+${linear('fill', C.card, [0, 0, 0, 1])}
 ${defs}
 </defs>${style && `\n<style>${style}</style>`}
 <g clip-path="url(#clip)">
 <rect x="${M}" y="${M}" width="${cw}" height="${ch}" fill="url(#fill)"/>
 ${body}
-<rect x="${M + RADIUS}" y="${M}" width="${cw - 2 * RADIUS}" height="1" fill="#fff" fill-opacity=".06"/>
+<rect x="${M + r}" y="${M}" width="${cw - 2 * r}" height="1" fill="#fff" fill-opacity=".07"/>
 </g>
-<rect x="${M + 0.5}" y="${M + 0.5}" width="${cw - 1}" height="${ch - 1}" rx="${RADIUS - 0.5}" fill="none" stroke="${C.border}"/>
+<rect x="${M + 0.5}" y="${M + 0.5}" width="${cw - 1}" height="${ch - 1}" rx="${r - 0.5}" fill="none" stroke="${C.border}"/>
 </svg>
 `;
 }
 
-// The kaysuto.fr backdrop: a dot grid fading out from the centre, a sand halo and film grain.
-function backdrop(w, h, { cx = w / 2, cy = 0, r = 560 } = {}) {
-  return {
-    defs: `<pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="11" cy="11" r="1.1" fill="#fff" fill-opacity=".09"/></pattern>
-${radial('fade', w / 2, h / 2, Math.max(w, h) * 0.55, [[0, '#fff', 1], [1, '#fff', 0]])}
+// The kaysuto.fr backdrop: a dot grid fading out from a point, and film grain.
+const backdrop = (w, h, cx, cy, r) => ({
+  defs: `<pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="11" cy="11" r="1.1" fill="#fff" fill-opacity=".09"/></pattern>
+${radial('fade', cx, cy, r, [[0, '#fff', 1], [1, '#fff', 0]])}
 <mask id="dotmask"><rect width="${w}" height="${h}" fill="url(#fade)"/></mask>
-${radial('halo', cx, cy, r, [[0, C.accent, 0.16], [1, C.accent, 0]])}
 <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>`,
-    body: `<rect width="${w}" height="${h}" fill="url(#dots)" mask="url(#dotmask)"/>
-<rect class="halo" width="${w}" height="${h}" fill="url(#halo)"/>
+  body: `<rect width="${w}" height="${h}" fill="url(#dots)" mask="url(#dotmask)"/>
 <rect width="${w}" height="${h}" filter="url(#grain)" opacity=".05"/>`,
-  };
-}
+});
 
 // Figures from kaysuto.fr.
 const STATS = [['24', 'ANS'], ['13', 'ANS DE CODE EN AUTODIDACTE'], ['3', 'ANS EN DATACENTER']];
 
+// Header: a warm sunrise over the horizon of a planet, with the kaysuto.fr greeting and figures.
 function hero() {
-  const w = 1200, h = 640, cx = w / 2, bd = backdrop(w, h);
-  const name = 'Kimiya', nameOpts = { size: 150, font: F.semi, tracking: -0.045 };
-  const nw = measure(name, nameOpts);
-  const line = twoTone([['Passionné par le ', C.muted], ['code & les pixels', C.text]], { x: cx - 8, y: 430, size: 38, font: F.medium, tracking: -0.015, anchor: 'middle' });
-  const caretX = cx - 8 + line.width / 2 + 8;
+  const w = 1200, h = 640, cx = w / 2, hy = 456, R = 1600, bd = backdrop(w, h, cx, 220, 520);
+  const [left, mid, right] = ['#c5a88d', '#fff1dc', '#fba541'];
+  const planet = extra => `<circle cx="${cx}" cy="${hy + R}" r="${R}"${extra}/>`;
+  // A beam of light runs along the horizon. A circle's outline starts at its rightmost point and runs
+  // clockwise, so the top of the planet sits at 3/4 of the circumference: the dash enters left, leaves right.
+  const Cf = 2 * Math.PI * R, top = 0.75 * Cf, from = r1(-(top - 900)), to = r1(-(top + 640));
+  const beam = extra => planet(` class="beam" fill="none" stroke="url(#hot)" stroke-linecap="round" stroke-dasharray="260 ${r1(Cf)}" stroke-dashoffset="${from}"${extra}`);
+  const line = twoTone([['Passionné par le ', C.secondary], ['code & les pixels', C.text]], { x: cx - 8, y: 372, size: 36, font: F.medium, tracking: -0.015, anchor: 'middle' });
+  const caretX = cx - 8 + line.width / 2 + 9;
+  const defs = [
+    bd.defs,
+    `<radialGradient id="atmo" cx="${cx}" cy="${hy}" r="700" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 ${hy}) scale(1 .42) translate(0 ${-hy})"><stop offset="0" stop-color="${right}" stop-opacity=".42"/><stop offset=".3" stop-color="${left}" stop-opacity=".16"/><stop offset=".7" stop-color="${left}" stop-opacity=".04"/><stop offset="1" stop-color="${left}" stop-opacity="0"/></radialGradient>`,
+    `<linearGradient id="rim" x1="0" y1="0" x2="${w}" y2="0" gradientUnits="userSpaceOnUse"><stop offset=".05" stop-color="${left}" stop-opacity="0"/><stop offset=".3" stop-color="${left}" stop-opacity=".8"/><stop offset=".5" stop-color="${mid}"/><stop offset=".7" stop-color="${right}" stop-opacity=".8"/><stop offset=".95" stop-color="${right}" stop-opacity="0"/></linearGradient>`,
+    `<linearGradient id="hot" x1="0" y1="0" x2="${w}" y2="0" gradientUnits="userSpaceOnUse"><stop offset=".08" stop-color="#fff3e3" stop-opacity="0"/><stop offset=".3" stop-color="#fff3e3" stop-opacity=".9"/><stop offset=".5" stop-color="#fffaf2"/><stop offset=".7" stop-color="#ffe0b8" stop-opacity=".9"/><stop offset=".92" stop-color="#ffe0b8" stop-opacity="0"/></linearGradient>`,
+    linear('title', G.sand, [0, 0, 0, 1]),
+    blur('md', 10), blur('sm', 2.5),
+    // The animated glow is blurred within the horizon band only, so each frame stays cheap.
+    `<filter id="band" filterUnits="userSpaceOnUse" x="0" y="${hy - 60}" width="${w}" height="${h - hy + 60}"><feGaussianBlur stdDeviation="7"/></filter>`,
+  ].join('\n');
   const stats = STATS.map(([n, label], i) => {
     const x = cx + (i - 1) * 330;
-    return `${text(n, { x, y: 532, size: 54, font: F.mono, tracking: -0.02, anchor: 'middle' })}
-${mono(label, { x, y: 570, size: 15, anchor: 'middle' })}`;
+    return `${text(n, { x, y: 552, size: 44, font: F.mono, tracking: -0.02, anchor: 'middle' })}
+${mono(label, { x, y: 586, size: 14, anchor: 'middle' })}`;
   }).join('\n');
   const body = `${bd.body}
-${text('Kimiya', { x: X, y: 76, size: 22, font: F.semi, tracking: -0.01 })}
-${mono('PRODUCT BUILDER · FRANCE', { x: w - X, y: 75, anchor: 'end' })}
-${text('Salut, je suis', { x: cx, y: 206, size: 40, font: F.medium, tracking: -0.015, anchor: 'middle', fill: C.muted })}
-${text(name, { x: cx, y: 336, ...nameOpts, anchor: 'middle', fill: C.accent })}
-<rect x="${r1(cx - nw / 2)}" y="358" width="${r1(nw)}" height="5" rx="2.5" fill="${C.accent}" fill-opacity=".4"/>
+<rect class="atmo" width="${w}" height="${h}" fill="url(#atmo)"/>
+${planet(' fill="#0f0906"')}
+${planet(' fill="none" stroke="url(#rim)" stroke-width="12" filter="url(#md)"')}
+${planet(' fill="none" stroke="url(#rim)" stroke-width="2"')}
+${beam(' stroke-width="12" opacity=".85" filter="url(#band)"')}
+${beam(' stroke-width="2.5"')}
+<g class="sun"><ellipse cx="${cx}" cy="${hy}" rx="200" ry="1.5" fill="#ffe8c8" opacity=".45" filter="url(#sm)"/>
+<circle cx="${cx}" cy="${hy}" r="16" fill="#fff" opacity=".6" filter="url(#md)"/>
+<circle cx="${cx}" cy="${hy}" r="4" fill="#fff"/></g>
+${mono('PRODUCT BUILDER · FRANCE', { x: cx, y: 100, anchor: 'middle' })}
+${text('Salut, je suis', { x: cx, y: 168, size: 36, font: F.medium, tracking: -0.015, anchor: 'middle', fill: C.secondary })}
+${text('Kimiya', { x: cx, y: 300, size: 150, font: F.semi, tracking: -0.045, anchor: 'middle', fill: 'url(#title)' })}
 ${line.svg}
-<rect class="caret" x="${r1(caretX)}" y="400" width="3" height="40" rx="1.5" fill="${C.accent}"/>
-<rect x="${cx - 420}" y="474" width="840" height="1" fill="${C.border}"/>
+<rect class="caret" x="${r1(caretX)}" y="344" width="3" height="36" rx="1.5" fill="${C.accent}"/>
 ${stats}`;
-  // The halo breathes and the caret blinks, as on the typewriter of kaysuto.fr.
-  const style = motion(`.halo{animation:halo 8s ease-in-out infinite}
+  // The glow breathes, the light twinkles, a beam sweeps every 9 s and the caret blinks like the typewriter of kaysuto.fr.
+  const style = motion(`.atmo{animation:pulse 8s ease-in-out infinite}
+.sun{transform-origin:${cx}px ${hy}px;animation:twinkle 4s ease-in-out infinite}
+.beam{animation:beam 9s ease-in-out infinite}
 .caret{animation:blink 1.1s steps(1) infinite}
-@keyframes halo{50%{opacity:.6}}
+@keyframes pulse{50%{opacity:.7}}
+@keyframes twinkle{50%{opacity:.75;transform:scale(.8)}}
+@keyframes beam{50%,100%{stroke-dashoffset:${to}}}
 @keyframes blink{50%{opacity:0}}`);
-  return card(w, h, body, { defs: bd.defs, style });
-}
-
-// Project cards, as on the portfolio: screenshot, status pill, title, two lines, tags, figure and link.
-const PROJECTS = {
-  jelly: {
-    image: 'jelly.webp', zoom: 2, focus: 0.36, status: ['BETA', C.accent], title: 'Jelly',
-    desc: ['Plateforme de streaming gratuite, sans pub,', 'à latence ultra-basse.'],
-    tags: [['React', si.siReact], ['TypeScript', si.siTypescript], ['Supabase', si.siSupabase]],
-    stat: '748', link: 'beta.playjelly.fr ↗',
-  },
-  clover: {
-    image: 'clover-games.webp', status: ['EN DÉVELOPPEMENT', C.gold], title: 'Clover Games',
-    desc: ['Serveur multiplateforme de mini-jeux Minecraft,', 'avec son launcher et son site.'],
-    tags: [['Next.js', si.siNextdotjs], ['Java · Paper', si.siOpenjdk], ['Rust · Tauri', si.siTauri]],
-    stat: '374', link: 'clovergames.fr ↗',
-  },
-  mirum: {
-    image: 'mirum-orbis.webp', zoom: 2.2, focus: 0.36, status: ['EN PRODUCTION', C.green], title: 'Mirum Orbis',
-    desc: ['MMORPG 2D immersif dans l’univers', 'fantastique d’Ereda.'],
-    tags: [['Next.js', si.siNextdotjs], ['TypeScript', si.siTypescript], ['Supabase', si.siSupabase]],
-    stat: '464', link: 'mirum-orbis.com ↗',
-  },
-  nohello: {
-    image: 'no-hello.webp', zoom: 2, focus: 0.42, status: ['OPEN SOURCE', C.accent], title: 'NoHello',
-    desc: ['L’étiquette d’un chat productif : poser', 'sa question dès le premier message.'],
-    tags: [['Next.js', si.siNextdotjs], ['TypeScript', si.siTypescript], ['Tailwind CSS', si.siTailwindcss]],
-    stat: '35', link: 'github.com/Kaysuto/no-hello ↗',
-  },
-};
-
-const project = key => () => {
-  const p = PROJECTS[key], w = 600, h = 620, iw = w - 2 * M, ih = 300;
-  const z = p.zoom ?? 1, fy = p.focus ?? 0.5; // the portfolio shots are small screens on a wide canvas: zoom on them
-  const defs = [
-    `<clipPath id="shot"><rect x="${M}" y="${M}" width="${iw}" height="${ih}"/></clipPath>`,
-    linear('veil', [[0, C.bg[0], 0], [1, C.bg[0], 1]], [0, 0, 0, 1]),
-  ].join('\n');
-  const status = pill(p.status[0], M + 20, M + 20, { dot: p.status[1], h: 30, size: 12, font: F.mono, tracking: 0.12, color: C.text, fill: '#1a110d' });
-  const stat = twoTone([[p.stat, C.text], [' COMMITS', C.dim]], { x: X, y: 572, size: 16, font: F.mono, tracking: 0.12 });
-  const body = `<g clip-path="url(#shot)"><image class="kb" x="${r1(M + iw / 2 - iw * z / 2)}" y="${r1(M + ih / 2 - ih * z * fy)}" width="${r1(iw * z)}" height="${r1(ih * z)}" preserveAspectRatio="xMidYMid slice" href="${webp(p.image)}"/></g>
-<rect x="${M}" y="${M + ih - 110}" width="${iw}" height="111" fill="url(#veil)"/>
-<rect x="${M}" y="${M + ih}" width="${iw}" height="1" fill="${C.border}"/>
-${status.svg}
-${text(p.title, { x: X, y: 372, size: 34, font: F.semi, tracking: -0.025 })}
-${p.desc.map((l, i) => text(l, { x: X, y: 410 + i * 27, size: 19, fill: C.muted })).join('\n')}
-${pillRow(p.tags, X, 466, { h: 32, size: 14 })}
-<rect x="${X}" y="530" width="${w - 2 * X}" height="1" fill="${C.border}"/>
-${stat.svg}
-${mono(p.link, { x: w - X, y: 572, size: 16, tracking: 0.02, fill: C.accent, anchor: 'end' })}`;
-  // Slow drift on the screenshot.
-  const style = motion(`.kb{transform-origin:300px ${M + ih / 2}px;animation:kb 30s ease-in-out infinite alternate}
-@keyframes kb{to{transform:scale(1.06)}}`);
   return card(w, h, body, { defs, style });
-};
-
-// Ma stack, ranked by depth like on kaysuto.fr: read from the projects' package.json / pom.xml.
-const LAYERS = [
-  ['L1', 'Front-end', [['TypeScript', si.siTypescript], ['React', si.siReact], ['Next.js', si.siNextdotjs], ['Tailwind CSS', si.siTailwindcss], ['Vite', si.siVite], ['shadcn/ui', si.siShadcnui]]],
-  ['L2', 'Backend & données', [['Node.js', si.siNodedotjs], ['Supabase', si.siSupabase], ['PostgreSQL', si.siPostgresql], ['MySQL', si.siMysql], ['Drizzle ORM', si.siDrizzle], ['Stripe', si.siStripe], ['Better Auth', si.siBetterauth]]],
-  ['L3', 'Infrastructure & DevOps', [['Linux', si.siLinux], ['Docker', si.siDocker], ['Nginx', si.siNginx], ['Proxmox', si.siProxmox], ['Pterodactyl', si.siPterodactyl], ['Cloudflare', si.siCloudflare]]],
-  ['L4', 'Jeu & apps', [['Java · Paper', si.siOpenjdk], ['Rust · Tauri', si.siTauri], ['Discord.js', si.siDiscorddotjs]]],
-];
-const STACK_SUB = 'Rangée par profondeur, de l’interface aux serveurs qui la font tourner.';
-
-function stack() {
-  const w = 1200, lh = 116, lg = 14, top = 212, h = top + LAYERS.length * lh + (LAYERS.length - 1) * lg + PAD + M;
-  const count = LAYERS.reduce((n, [, , tools]) => n + tools.length, 0);
-  const bd = backdrop(w, h, { cx: w, cy: 0, r: 640 });
-  const title = twoTone([['Ma ', C.text], ['stack', C.accent]], { x: X, y: 120, size: 56 });
-  const layers = LAYERS.map(([id, name, tools], i) => {
-    const y = top + i * (lh + lg), pw = w - 2 * X;
-    return `<rect x="${X}" y="${y}" width="${pw}" height="${lh}" rx="16" fill="${C.panel}" fill-opacity=".85" stroke="${C.border}"/>
-${mono(id, { x: X + 24, y: y + 38, size: 15, fill: C.accent })}
-${text(name, { x: X + 64, y: y + 39, size: 20, font: F.semi, tracking: -0.01 })}
-${mono(String(tools.length), { x: X + pw - 24, y: y + 38, size: 15, anchor: 'end' })}
-${pillRow(tools, X + 24, y + 60, { h: 34, size: 15, fill: '#1c130f' })}`;
-  }).join('\n');
-  const body = `${bd.body}
-${title.svg}
-${mono(`${count} TECHNOLOGIES · ${LAYERS.length} STRATES`, { x: w - X, y: 118, anchor: 'end' })}
-${text(STACK_SUB, { x: X, y: 162, size: 20, fill: C.muted })}
-${layers}`;
-  return card(w, h, body, { defs: bd.defs });
 }
 
-const ABOUT = [
-  ['Otaku', 'Trop de temps sur les animés et les mangas.'],
-  ['Builder', 'Des trucs simples, utiles et faciles à prendre en main.'],
-  ['Partage', 'Des docs claires pour aider les autres.'],
-  ['Énergie', 'Une Monster bien fraîche et ma femme.'],
-];
+// Shared copy of the big project cards: app icon and eyebrow, two-tone title, link, then the key figure.
+function projectCopy({ icon, eyebrow, title, link, linkColor, stat, caption }) {
+  return [
+    appIcon(icon, X, 64),
+    mono(eyebrow, { x: X + 60, y: 92 }),
+    ...title.map((line, i) => text(line, { x: X, y: 178 + i * 56, size: 50, font: F.semi, tracking: -0.03, fill: i === title.length - 1 ? C.accent : C.text })),
+    text(link, { x: X, y: 178 + title.length * 56 + 2, size: 22, font: F.medium, fill: linkColor }),
+    text(stat, { x: X - 5, y: 488, size: 168, font: F.semi, tracking: -0.05, fill: 'url(#stat)' }),
+    text(caption, { x: X, y: 536, size: 22, font: F.medium, fill: C.secondary }),
+  ].join('\n');
+}
 
-function about() {
-  const w = 600, h = 560;
-  const title = twoTone([['À propos de ', C.text], ['moi', C.accent]], { x: X, y: 112, size: 40 });
-  const rows = ABOUT.map(([name, desc], i) => {
-    const y = 160 + i * 92;
-    return `<rect x="${X}" y="${y}" width="${w - 2 * X}" height="1" fill="${C.border}"/>
-${mono(String(i + 1).padStart(2, '0'), { x: X, y: y + 42, size: 15, fill: C.accent })}
-${text(name, { x: X + 48, y: y + 42, size: 21, font: F.semi, tracking: -0.01 })}
-${text(desc, { x: X + 48, y: y + 70, size: 17, fill: C.muted })}`;
+// The Clover Games game modes (the lobby is not one), plus the in-house launcher.
+const MODES = [['Practice', 'swords'], ['PvPSoup', 'soup'], ['SkyPvP', 'cloudy'], ['Créatif', 'palette'], ['BedWars', 'bed-double']];
+const SERVERS = [...MODES, ['Launcher', 'monitor-down']];
+
+function clover() {
+  const [a, b] = G.clover, sx = 430, tw = 162, th = 128;
+  const defs = [linear('stat', G.clover), radial('glow', 760, 600, 420, [[0, b, 0.18], [1, b, 0]])].join('\n');
+  const tiles = SERVERS.map(([name, icon], i) => {
+    const x = sx + (i % 2) * (tw + 12), y = 72 + Math.floor(i / 2) * (th + 12);
+    return `<rect x="${x}" y="${y}" width="${tw}" height="${th}" rx="18" fill="${C.tile}" fill-opacity=".7"/>
+<rect x="${x + 0.5}" y="${y + 0.5}" width="${tw - 1}" height="${th - 1}" rx="17.5" fill="none" stroke="${C.border}"/>
+<rect class="pip" x="${x + 22}" y="${y + 22}" width="40" height="40" rx="11" fill="${a}" fill-opacity=".14" style="animation-delay:${i * 0.5}s"/>
+${lucide(icon, x + 30, y + 30, 24, a)}
+${text(name, { x: x + 22, y: y + 100, size: 20, font: F.semi })}`;
   }).join('\n');
-  const body = `${title.svg}
-${mono('ANILIST ↗', { x: w - X, y: 110, fill: C.accent, anchor: 'end' })}
-${rows}`;
-  return card(w, h, body);
+  const body = `<rect width="800" height="600" fill="url(#glow)"/>
+${tiles}
+${projectCopy({ icon: 'clover', eyebrow: 'CLOVER GAMES', title: ['Mini-jeux', 'Minecraft.'], link: 'clovergames.fr ›', linkColor: a, stat: String(MODES.length), caption: 'modes de jeu multiplateformes' })}`;
+  // Each mode tile pulses softly in turn, like a status light.
+  const style = motion(`.pip{animation:pip 3s ease-in-out infinite}
+@keyframes pip{50%{fill-opacity:.32}}`);
+  return card(800, 600, body, { defs, style });
+}
+
+function jelly() {
+  const [a] = G.jelly, sx = 470, sy = 72, sw = 440, sh = 416, mid = (sx + 788) / 2; // 788: visible right edge of the card
+  const defs = [
+    linear('stat', G.jelly),
+    linear('bar', G.jelly),
+    radial('glow', 760, 600, 420, [[0, a, 0.16], [1, a, 0]]),
+    linear('sky', ['#0f4a47', '#08202b'], [0, 0, 0, 1]),
+    '<linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".75"/></linearGradient>',
+    `<clipPath id="screen"><rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" rx="20"/></clipPath>`,
+    blur('moon', 14),
+  ].join('\n');
+  // A stylised film still: sky, moon, two mountain ranges, a subtitle and the progress bar.
+  const screen = `<g clip-path="url(#screen)">
+<g class="kb"><rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" fill="url(#sky)"/>
+<circle cx="${sx + 250}" cy="${sy + 70}" r="40" fill="#a7f3e8" opacity=".55" filter="url(#moon)"/>
+<circle cx="${sx + 250}" cy="${sy + 70}" r="22" fill="#e6fffb"/>
+<path d="M${sx} ${sy + 236}L${sx + 70} ${sy + 186}L${sx + 130} ${sy + 218}L${sx + 210} ${sy + 156}L${sx + 300} ${sy + 226}L${sx + 370} ${sy + 186}L${sx + sw} ${sy + 232}V${sy + sh}H${sx}Z" fill="#0d3d3c"/>
+<path d="M${sx} ${sy + 290}L${sx + 90} ${sy + 246}L${sx + 170} ${sy + 278}L${sx + 260} ${sy + 236}L${sx + 350} ${sy + 284}L${sx + sw} ${sy + 260}V${sy + sh}H${sx}Z" fill="#06211f"/></g>
+<rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" fill="url(#shade)"/>
+<rect x="${sx + 22}" y="${sy + 22}" width="62" height="26" rx="13" fill="#fff" fill-opacity=".16"/>
+${text('1080p', { x: sx + 53, y: sy + 40, size: 13, font: F.semi, anchor: 'middle', fill: '#fff' })}
+<circle cx="${mid}" cy="${sy + 168}" r="31" fill="#fff" fill-opacity=".92"/>
+<path d="M${mid - 8} ${sy + 153}v30l25-15z" fill="#0b0b0d"/>
+<rect x="${mid - 80}" y="${sy + sh - 116}" width="160" height="30" rx="8" fill="#000" fill-opacity=".55"/>
+${text('Zéro pub. Promis.', { x: mid, y: sy + sh - 96, size: 15, font: F.semi, anchor: 'middle', fill: '#fff' })}
+${text('42:17', { x: sx + 24, y: sy + sh - 44, size: 14, font: F.mono, fill: '#fff', extra: ' fill-opacity=".8"' })}
+<rect x="${sx + 24}" y="${sy + sh - 32}" width="${sw}" height="5" rx="2.5" fill="#fff" fill-opacity=".22"/>
+<rect class="p" x="${sx + 24}" y="${sy + sh - 32}" width="150" height="5" rx="2.5" fill="url(#bar)"/>
+<circle class="k" cx="${sx + 174}" cy="${sy + sh - 29.5}" r="8" fill="#fff"/>
+</g>
+<rect x="${sx + 0.5}" y="${sy + 0.5}" width="${sw - 1}" height="${sh - 1}" rx="19.5" fill="none" stroke="#fff" stroke-opacity=".14"/>`;
+  const body = `<rect width="800" height="600" fill="url(#glow)"/>
+${screen}
+${projectCopy({ icon: 'jelly', eyebrow: 'JELLY · BETA', title: ['Streaming', 'sans pub.'], link: 'beta.playjelly.fr ›', linkColor: a, stat: '748', caption: 'commits sur Jelly' })}`;
+  // Slow zoom on the film still; playback keeps going: the fill (150 wide) grows 1.8× in a minute and the knob follows.
+  const style = motion(`.kb{transform-origin:${sx + sw / 2}px ${sy + sh / 2}px;animation:kb 24s ease-in-out infinite alternate}
+.p{transform-origin:${sx + 24}px 0;animation:play 60s linear infinite}
+.k{animation:knob 60s linear infinite}
+@keyframes kb{to{transform:scale(1.08)}}
+@keyframes play{to{transform:scaleX(1.8)}}
+@keyframes knob{to{transform:translateX(120px)}}`);
+  return card(800, 600, body, { defs, style });
 }
 
 // Commits authored on GitHub, by project (2026-10-21; the BySolaire/playjelly mirror is not counted twice).
-const COMMITS = [['Jelly', 748, C.jelly], ['Mirum Orbis', 464, C.gold], ['Clover Games', 374, C.green], ['Guides & outils', 260, C.accent], ['Portfolio', 162, C.orange]];
+const COMMITS = [
+  ['Jelly', 748, 'play', G.jelly],
+  ['Mirum Orbis', 464, 'swords', G.mirum],
+  ['Clover Games', 374, 'clover', G.clover],
+  ['Guides & outils', 260, 'book-open-text', G.sand],
+  ['Portfolio', 162, 'user-round', G.portfolio],
+];
 
+// Breakdown in the style of iPhone storage: one segmented bar, then one row per project.
 function commits() {
-  const w = 600, h = 560, total = COMMITS.reduce((n, [, c]) => n + c, 0), width = w - 2 * X, by = 168;
+  const total = COMMITS.reduce((n, [, count]) => n + count, 0), width = 400 - 2 * X, by = 212;
   let cursor = X;
-  const bar = COMMITS.map(([, count, color], i) => {
-    const sw = count / total * width, gap = i < COMMITS.length - 1 ? 3 : 0;
-    const seg = `<rect x="${r1(cursor)}" y="${by}" width="${r1(sw - gap)}" height="10" fill="${color}"/>`;
-    cursor += sw;
+  const bar = COMMITS.map(([, count, , [, color]], i) => {
+    const w = count / total * width, gap = i < COMMITS.length - 1 ? 3 : 0;
+    const seg = `<rect x="${r1(cursor)}" y="${by}" width="${r1(w - gap)}" height="12" fill="${color}"/>`;
+    cursor += w;
     return seg;
   }).join('');
-  const defs = `<clipPath id="bar"><rect x="${X}" y="${by}" width="${width}" height="10" rx="5"/></clipPath>
-${linear('shine', [[0, '#fff', 0], [0.5, '#fff', 0.5], [1, '#fff', 0]])}`;
-  const rows = COMMITS.map(([name, count, color], i) => {
-    const y = 212 + i * 62;
-    return `<rect x="${X}" y="${y}" width="${width}" height="1" fill="${C.border}"/>
-<rect x="${X}" y="${y + 25}" width="12" height="12" rx="3" fill="${color}"/>
-${text(name, { x: X + 28, y: y + 38, size: 19, font: F.semi, tracking: -0.01 })}
-${text(String(count), { x: w - X, y: y + 38, size: 18, font: F.mono, anchor: 'end', fill: C.muted })}`;
+  const defs = [
+    `<clipPath id="bar"><rect x="${X}" y="${by}" width="${width}" height="12" rx="6"/></clipPath>`,
+    ...COMMITS.map(([, , , c], i) => linear(`t${i}`, c, [0, 0, 0, 1])),
+    '<linearGradient id="shine"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>',
+  ].join('\n');
+  const rows = COMMITS.map(([label, count, icon], i) => {
+    const base = 304 + i * 58, y = base - 24; // the last row lands on the shared caption baseline (536)
+    return `<rect x="${X}" y="${y}" width="34" height="34" rx="9" fill="url(#t${i})"/>
+<rect x="${X + 0.5}" y="${y + 0.5}" width="33" height="33" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".22"/>
+${lucide(icon, X + 8, y + 8, 18, '#1a110d')}
+${text(label, { x: X + 48, y: base, size: 19, font: F.semi })}
+${text(String(count), { x: 400 - X, y: base, size: 18, font: F.mono, anchor: 'end', fill: C.secondary })}`;
   }).join('\n');
-  const body = `${twoTone([['Mes ', C.text], ['commits', C.accent]], { x: X, y: 112, size: 40 }).svg}
-${mono(`${total.toLocaleString('fr-FR').replace(/\s/g, ' ')} SUR GITHUB`, { x: w - X, y: 110, anchor: 'end' })}
-<g clip-path="url(#bar)">${bar}<rect class="shine" x="${X - 90}" y="${by}" width="60" height="10" fill="url(#shine)"/></g>
+  const body = `${twoTone([['Mes ', C.text], ['commits.', C.accent]], { x: X, y: 114, size: 40 }).svg}
+${mono(`${total.toLocaleString('fr-FR').replace(/\s/g, ' ')} SUR GITHUB`, { x: X, y: 150, size: 14 })}
+<g clip-path="url(#bar)">${bar}<rect class="shine" x="${X - 90}" y="${by}" width="60" height="12" fill="url(#shine)"/></g>
 ${rows}`;
+  // A soft highlight sweeps across the bar every 6 s, starting outside it.
   const style = motion(`.shine{animation:shine 6s ease-in-out infinite}
 @keyframes shine{45%,100%{transform:translateX(${width + 120}px)}}`);
-  return card(w, h, body, { defs, style });
+  return card(400, 600, body, { defs, style });
 }
+
+// What the projects are really built with, read from their package.json / pom.xml on 2026-10-21.
+const SKILLS = [
+  ['FRONT-END', [[si.siTypescript, 'TypeScript'], [si.siReact, 'React'], [si.siNextdotjs, 'Next.js'], [si.siTailwindcss, 'Tailwind CSS']]],
+  ['BACK & DONNÉES', [[si.siSupabase, 'Supabase'], [si.siPostgresql, 'PostgreSQL'], [si.siMysql, 'MySQL'], [si.siStripe, 'Stripe']]],
+  ['JEU & APPS', [[si.siOpenjdk, 'Java · Paper'], [si.siTauri, 'Rust · Tauri'], [si.siDiscorddotjs, 'Discord.js'], [si.siNodedotjs, 'Node.js']]],
+  ['INFRA & DEVOPS', [[si.siDocker, 'Docker'], [si.siPterodactyl, 'Pterodactyl'], [si.siProxmox, 'Proxmox'], [si.siNginx, 'Nginx']]],
+];
+const SKILLS_SUB = 'Du site au serveur de jeu, tout tourne en production.';
+
+// Full-width card: four columns, one per domain, each a list of logo tiles.
+function skills() {
+  const w = 1200, h = 560, col = (w - 2 * X) / SKILLS.length, bd = backdrop(w, h, w - 120, 0, 620);
+  const defs = `${bd.defs}\n${radial('glow', w - 120, 0, 560, [[0, C.accent, 0.14], [1, C.accent, 0]])}`;
+  const cols = SKILLS.map(([eyebrow, tools], c) => {
+    const x = X + c * col;
+    return [mono(eyebrow, { x, y: 236 }),
+      ...tools.map(([icon, label], i) => {
+        const y = 260 + i * 62; // the last tile ends on the bottom padding (496)
+        return `<rect x="${x}" y="${y}" width="48" height="48" rx="12" fill="${C.tile}"/>
+<rect x="${x + 0.5}" y="${y + 0.5}" width="47" height="47" rx="11.5" fill="none" stroke="${C.border}"/>
+${logo(icon, x + 24, y + 24, 24)}
+${text(label, { x: x + 64, y: y + 31, size: 20, font: F.semi })}`;
+      })].join('\n');
+  }).join('\n');
+  const body = `${bd.body}
+<rect width="${w}" height="${h}" fill="url(#glow)"/>
+${twoTone([['Ce que je ', C.text], ['maîtrise.', C.accent]], { x: X, y: 120, size: 50, tracking: -0.03 }).svg}
+${text(SKILLS_SUB, { x: X, y: 160, size: 22, font: F.medium, fill: C.secondary })}
+${cols}`;
+  return card(w, h, body, { defs });
+}
+
+// À propos, in the style of an iPhone settings list: one coloured icon per row.
+const ABOUT = [
+  ['Otaku', 'trop d’animés et de mangas', 'tv', ['#f7a8bb', '#d9607c']],
+  ['Builder', 'web, devops, hosting, gaming', 'hammer', ['#ffd0a0', '#e0894f']],
+  ['Partage', 'des docs claires pour aider', 'book-open-text', ['#d5c2f5', '#9b7fd6']],
+  ['Énergie', 'une Monster et ma femme', 'zap', G.clover],
+];
+
+function about() {
+  const defs = ABOUT.map(([, , , c], i) => linear(`t${i}`, c, [0, 0, 0, 1])).join('\n');
+  const rows = ABOUT.map(([label, sub, icon], i) => {
+    const base = 536 - (ABOUT.length - 1 - i) * 80, y = base - 38; // the last row lands on the shared caption baseline (536)
+    return `<rect x="${X}" y="${y}" width="40" height="40" rx="10" fill="url(#t${i})"/>
+<rect x="${X + 0.5}" y="${y + 0.5}" width="39" height="39" rx="9.5" fill="none" stroke="#fff" stroke-opacity=".22"/>
+${lucide(icon, X + 10, y + 10, 20, '#1a110d')}
+${text(label, { x: X + 54, y: base - 20, size: 19, font: F.semi })}
+${text(sub, { x: X + 54, y: base, size: 15, font: F.medium, fill: C.secondary })}`;
+  }).join('\n');
+  const body = `${twoTone([['À ', C.text], ['propos.', C.accent]], { x: X, y: 114, size: 40 }).svg}
+${text('24 ans, je fabrique des trucs.', { x: X, y: 150, size: 17, font: F.medium, fill: C.secondary })}
+${mono('ANILIST ›', { x: X, y: 188, size: 14, fill: '#f7a8bb' })}
+${rows}`;
+  return card(400, 600, body, { defs });
+}
+
+// Small project cards: icon, mono eyebrow, two-tone title, link on the bottom baseline.
+const SMALL = {
+  mirum: { eyebrow: 'MIRUM ORBIS', title: ['MMORPG 2D,', 'l’univers d’Ereda.'], link: 'mirum-orbis.com ›', color: G.mirum },
+  nohello: { eyebrow: 'NOHELLO', title: ['L’étiquette du', 'chat productif.'], link: 'Kaysuto/no-hello ›', color: G.nohello },
+  portfolio: { eyebrow: 'PORTFOLIO', title: ['Mes réalisations', 'et contact pro.'], link: 'kaysuto.fr ›', color: G.portfolio },
+};
+const smallCard = name => () => {
+  const { eyebrow, title, link, color } = SMALL[name], h = 360;
+  const defs = radial('glow', 360, h, 300, [[0, color[1], 0.16], [1, color[1], 0]]);
+  const body = `<rect width="400" height="${h}" fill="url(#glow)"/>
+${appIcon(name, X, 64)}
+${mono(eyebrow, { x: X + 60, y: 92 })}
+${title.map((line, i) => text(line, { x: X, y: 180 + i * 40, size: 32, font: F.semi, tracking: -0.025, fill: i === title.length - 1 ? C.accent : C.text })).join('\n')}
+${text(link, { x: X, y: h - M - PAD, size: 20, font: F.medium, fill: color[0] })}`;
+  return card(400, h, body, { defs });
+};
 
 const out = new URL('../assets/', import.meta.url);
-const CARDS = { hero, jelly: project('jelly'), clover: project('clover'), mirum: project('mirum'), nohello: project('nohello'), stack, about, commits };
+const CARDS = { hero, clover, commits, skills, about, jelly, mirum: smallCard('mirum'), nohello: smallCard('nohello'), portfolio: smallCard('portfolio') };
 for (const [name, make] of Object.entries(CARDS)) writeFileSync(new URL(`${name}.svg`, out), make());
 
-// Layout guards: copy must stay inside its card.
+// Layout guards: titles must stay clear of the visuals, narrow-card copy must fit its card.
 let over = 0;
 const fits = (label, right, limit) => { if (right > limit) { over++; console.log(`OVER ${label}: ${Math.round(right)} / ${limit}`); } };
-for (const p of Object.values(PROJECTS)) {
-  for (const l of p.desc) fits(l, X + measure(l, { size: 19 }), 600 - X);
-  const tags = p.tags.reduce((n, [l]) => n + 28 + 24 + measure(l, { size: 14 }) + 10, 0);
-  fits(`${p.title} tags`, X + tags, 600 - X);
-  fits(`${p.title} footer`, X + measure(`${p.stat} COMMITS`, { size: 16, font: F.mono, tracking: 0.12 }) + 24 + measure(p.link, { size: 16, font: F.mono, tracking: 0.02 }), 600 - X);
+for (const line of ['Mini-jeux', 'Minecraft.', 'Streaming', 'sans pub.']) fits(line, X + measure(line, { size: 50, font: F.semi, tracking: -0.03 }), 420);
+fits('clover caption', X + measure('modes de jeu multiplateformes', { size: 22 }), 420);
+fits('Mes commits.', X + measure('Mes commits.', { size: 40, font: F.semi, tracking: -0.025 }), 400 - X);
+for (const [label] of COMMITS) fits(label, X + 48 + measure(label, { size: 19, font: F.semi }), 400 - X - 44);
+fits(SKILLS_SUB, X + measure(SKILLS_SUB, { size: 22 }), 1200 - X);
+for (const [, tools] of SKILLS) for (const [, label] of tools) fits(label, 64 + measure(label, { size: 20, font: F.semi }), (1200 - 2 * X) / SKILLS.length - 16);
+for (const [label, sub] of ABOUT) fits(sub, X + 54 + measure(sub, { size: 15 }), 400 - X), fits(label, X + 54 + measure(label, { size: 19, font: F.semi }), 400 - X);
+for (const { title, link, eyebrow } of Object.values(SMALL)) {
+  for (const line of title) fits(line, X + measure(line, { size: 32, font: F.semi, tracking: -0.025 }), 400 - X);
+  fits(link, X + measure(link, { size: 20 }), 400 - X);
+  fits(eyebrow, X + 60 + measure(eyebrow, { size: 15, font: F.mono, tracking: 0.14 }), 400 - X);
 }
-for (const [, name, tools] of LAYERS) fits(name, X + 24 + tools.reduce((n, [l]) => n + 28 + 24 + measure(l, { size: 15 }) + 10, 0), 1200 - X - 24);
-for (const [, desc] of ABOUT) fits(desc, X + 48 + measure(desc, { size: 17 }), 600 - X);
-fits('hero line', 600 + measure('Passionné par le code & les pixels', { size: 38 }) / 2 + 12, 1200 - X);
+for (const [name] of SERVERS) fits(name, 430 + 22 + measure(name, { size: 20, font: F.semi }), 430 + 162 - 16);
+fits('hero line', 600 + measure('Passionné par le code & les pixels', { size: 36 }) / 2 + 14, 1200 - X);
 console.log(over ? `${over} overflow(s)` : 'all copy fits');
 if (over) process.exitCode = 1;
