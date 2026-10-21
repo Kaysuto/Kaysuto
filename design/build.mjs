@@ -150,6 +150,9 @@ ${radial('fade', cx, cy, r, [[0, '#fff', 1], [1, '#fff', 0]])}
 <rect width="${w}" height="${h}" filter="url(#grain)" opacity=".05"/>`,
 });
 
+// The line under the name, from the original profile README.
+const TAGLINE = [['Je construis des trucs ', C.secondary], ['simples, utiles et faciles à prendre en main.', C.text]];
+
 // Header: a warm sunrise over the horizon of a planet, the name and one line.
 function hero() {
   const w = 1200, h = 640, cx = w / 2, hy = 476, R = 1600, bd = backdrop(w, h, cx, 220, 520);
@@ -159,7 +162,7 @@ function hero() {
   // clockwise, so the top of the planet sits at 3/4 of the circumference: the dash enters left, leaves right.
   const Cf = 2 * Math.PI * R, top = 0.75 * Cf, from = r1(-(top - 900)), to = r1(-(top + 640));
   const beam = extra => planet(` class="beam" fill="none" stroke="url(#hot)" stroke-linecap="round" stroke-dasharray="260 ${r1(Cf)}" stroke-dashoffset="${from}"${extra}`);
-  const line = twoTone([['Passionné par le ', C.secondary], ['code & les pixels', C.text]], { x: cx - 8, y: 372, size: 36, font: F.medium, tracking: -0.015, anchor: 'middle' });
+  const line = twoTone(TAGLINE, { x: cx - 8, y: 372, size: 34, font: F.medium, tracking: -0.015, anchor: 'middle' });
   const caretX = cx - 8 + line.width / 2 + 9;
   const defs = [
     bd.defs,
@@ -208,51 +211,41 @@ function projectCopy({ icon, eyebrow, title, link, linkColor, stat, caption }) {
   ].join('\n');
 }
 
-// Everything built around the server, from the Clover Games repositories and wiki (2026-10-21).
-const CLOVER_PARTS = [
-  ['puzzle', 'Plugin clover-core', '30 MODULES · PAPER 26.3'],
-  ['monitor-down', 'Launcher', 'TAURI 2 · RUST · V0.6.1'],
-  ['globe', 'Site', 'NEXT.JS · BOUTIQUE · VOTE'],
-  ['bot', 'Bot Discord', 'SYNC EN JEU · ANTI-RAID'],
-];
-// The game modes open today (the lobby is not one).
-const MODES = ['Practice', 'PvPSoup', 'SkyPvP', 'BedWars', 'Créatif'];
-const CLOVER_COMMANDS = 123; // commands declared in clover-core's plugin.yml
+// From the Clover Games wiki (2026-10-21): the modes open today (the lobby is not one), the next one,
+// and what was built around the server.
+const MODES = [['Practice', 'swords'], ['PvPSoup', 'soup'], ['SkyPvP', 'cloudy'], ['BedWars', 'bed-double'], ['Créatif', 'palette']];
+const NEXT_MODE = ['Survie', 'trees'];
+const CLOVER_PARTS = [['puzzle', 'Plugin'], ['monitor-down', 'Launcher'], ['globe', 'Site web'], ['bot', 'Bot Discord']];
+
+// One tile of the Clover visual: icon on a tinted square, then the label.
+function cloverTile(x, y, w, h, icon, label, { color, dim = false, delay = 0 } = {}) {
+  const box = h - 24;
+  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="16" fill="${C.tile}" fill-opacity="${dim ? 0.3 : 0.7}"/>
+<rect x="${x + 0.5}" y="${y + 0.5}" width="${w - 1}" height="${h - 1}" rx="15.5" fill="none" stroke="${C.border}"${dim ? ' stroke-dasharray="5 5"' : ''}/>
+<rect${dim ? '' : ' class="pip"'} x="${x + 12}" y="${y + 12}" width="${box}" height="${box}" rx="10" fill="${color}" fill-opacity="${dim ? 0.06 : 0.14}" style="animation-delay:${delay}s"/>
+${lucide(icon, x + 12 + box / 2 - 10, y + 12 + box / 2 - 10, 20, dim ? C.tertiary : color)}
+${text(label, { x: x + 24 + box, y: y + h / 2 + 6.5, size: 18, font: F.semi, fill: dim ? C.tertiary : C.text })}`;
+}
 
 function clover() {
-  const [a, b] = G.clover, sx = 430, pw = 346, ph = 76;
+  const [a, b] = G.clover, sx = 430, cw = 167, gap = 12;
   const defs = [linear('stat', G.clover), radial('glow', 760, 600, 420, [[0, b, 0.18], [1, b, 0]])].join('\n');
-  // The ecosystem: one row per piece, like a list of services.
-  const parts = CLOVER_PARTS.map(([icon, name, sub], i) => {
-    const y = 72 + i * (ph + 10);
-    return `<rect x="${sx}" y="${y}" width="${pw}" height="${ph}" rx="18" fill="${C.tile}" fill-opacity=".7"/>
-<rect x="${sx + 0.5}" y="${y + 0.5}" width="${pw - 1}" height="${ph - 1}" rx="17.5" fill="none" stroke="${C.border}"/>
-<rect class="pip" x="${sx + 18}" y="${y + 18}" width="40" height="40" rx="11" fill="${a}" fill-opacity=".14" style="animation-delay:${i * 0.6}s"/>
-${lucide(icon, sx + 26, y + 26, 24, a)}
-${text(name, { x: sx + 72, y: y + 34, size: 19, font: F.semi })}
-${mono(sub, { x: sx + 72, y: y + 57, size: 13, tracking: 0.08 })}`;
-  }).join('\n');
-  // The modes, as pills with a status light, wrapped on two lines.
-  let px = sx, py = 438;
-  const modes = MODES.map((name, i) => {
-    const w = 36 + measure(name, { size: 15, font: F.semi });
-    if (px + w > sx + pw) { px = sx; py += 44; }
-    const svg = `<rect x="${r1(px)}" y="${py}" width="${r1(w)}" height="34" rx="10" fill="${C.tile}" fill-opacity=".7" stroke="${C.border}"/>
-<circle class="led" cx="${r1(px + 16)}" cy="${py + 17}" r="4" fill="${a}" style="animation-delay:${i * 0.4}s"/>
-${text(name, { x: px + 28, y: py + 22.5, size: 15, font: F.semi })}`;
-    px += w + 8;
-    return svg;
-  }).join('\n');
+  const col = i => sx + (i % 2) * (cw + gap);
+  // Section 1, aligned with the eyebrow: the modes, then the next one with a dashed outline.
+  const modes = [...MODES, NEXT_MODE].map(([name, icon], i) =>
+    cloverTile(col(i), 112 + Math.floor(i / 2) * 70, cw, 58, icon, name, { color: a, dim: i === MODES.length, delay: i * 0.5 })).join('\n');
+  // Section 2, ending on the shared caption baseline: what was built around the server.
+  const parts = CLOVER_PARTS.map(([icon, name], i) =>
+    cloverTile(col(i), 414 + Math.floor(i / 2) * 70, cw, 52, icon, name, { color: G.sand[1], delay: 3 + i * 0.5 })).join('\n');
   const body = `<rect width="800" height="600" fill="url(#glow)"/>
-${parts}
-${mono(`${MODES.length} MODES · JAVA & BEDROCK ENSEMBLE`, { x: sx, y: 424, size: 13, tracking: 0.08 })}
+${mono('EN JEU · JAVA & BEDROCK', { x: sx, y: 92, size: 14, tracking: 0.1 })}
 ${modes}
-${projectCopy({ icon: 'clover', eyebrow: 'CLOVER GAMES', title: ['Serveur', 'Minecraft.'], link: 'play.clovergames.fr ›', linkColor: a, stat: String(CLOVER_COMMANDS), caption: 'commandes dans mon plugin' })}`;
-  // The service icons and the mode lights pulse softly in turn, like status lights.
+${mono('AUTOUR DU SERVEUR', { x: sx, y: 396, size: 14, tracking: 0.1 })}
+${parts}
+${projectCopy({ icon: 'clover', eyebrow: 'CLOVER GAMES', title: ['Serveur', 'Minecraft.'], link: 'play.clovergames.fr ›', linkColor: a, stat: '0 €', caption: 'pour jouer, zéro pay-to-win' })}`;
+  // The icon squares pulse softly in turn, like status lights.
   const style = motion(`.pip{animation:pip 3s ease-in-out infinite}
-.led{animation:led 2.4s ease-in-out infinite}
-@keyframes pip{50%{fill-opacity:.32}}
-@keyframes led{50%{opacity:.35}}`);
+@keyframes pip{50%{fill-opacity:.3}}`);
   return card(800, 600, body, { defs, style });
 }
 
@@ -424,7 +417,7 @@ for (const [name, make] of Object.entries(CARDS)) writeFileSync(new URL(`${name}
 let over = 0;
 const fits = (label, right, limit) => { if (right > limit) { over++; console.log(`OVER ${label}: ${Math.round(right)} / ${limit}`); } };
 for (const line of ['Serveur', 'Minecraft.', 'Streaming', 'sans pub.']) fits(line, X + measure(line, { size: 50, font: F.semi, tracking: -0.03 }), 420);
-fits('clover caption', X + measure('commandes dans mon plugin', { size: 22 }), 420);
+fits('clover caption', X + measure('pour jouer, zéro pay-to-win', { size: 22 }), 420);
 fits('Mes commits.', X + measure('Mes commits.', { size: 40, font: F.semi, tracking: -0.025 }), 400 - X);
 for (const [label] of COMMITS) fits(label, X + 48 + measure(label, { size: 19, font: F.semi }), 400 - X - 44);
 fits(SKILLS_SUB, X + measure(SKILLS_SUB, { size: 22 }), 1200 - X);
@@ -435,8 +428,8 @@ for (const { title, link, eyebrow } of Object.values(SMALL)) {
   fits(link, X + measure(link, { size: 20 }), 400 - X);
   fits(eyebrow, X + 60 + measure(eyebrow, { size: 15, font: F.mono, tracking: 0.14 }), 400 - X);
 }
-for (const [, name, sub] of CLOVER_PARTS) fits(name, 430 + 72 + measure(name, { size: 19, font: F.semi }), 776 - 16), fits(sub, 430 + 72 + measure(sub, { size: 13, font: F.mono, tracking: 0.08 }), 776 - 16);
-fits('clover modes label', 430 + measure(`${MODES.length} MODES · JAVA & BEDROCK ENSEMBLE`, { size: 13, font: F.mono, tracking: 0.08 }), 776);
-fits('hero line', 600 + measure('Passionné par le code & les pixels', { size: 36 }) / 2 + 14, 1200 - X);
+for (const [name] of [...MODES, NEXT_MODE]) fits(name, 58 + measure(name, { size: 18, font: F.semi }), 167 - 12);
+for (const [, name] of CLOVER_PARTS) fits(name, 52 + measure(name, { size: 18, font: F.semi }), 167 - 12);
+fits('hero line', 600 + measure(TAGLINE.map(([t]) => t).join(''), { size: 34, tracking: -0.015 }) / 2 + 14, 1200 - X);
 console.log(over ? `${over} overflow(s)` : 'all copy fits');
 if (over) process.exitCode = 1;
