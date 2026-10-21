@@ -242,7 +242,7 @@ ${mono('MODES DE JEU', { x: sx, y: 92, size: 14, tracking: 0.1 })}
 ${modes}
 ${mono('AUTOUR DU SERVEUR', { x: sx, y: 396, size: 14, tracking: 0.1 })}
 ${parts}
-${projectCopy({ icon: 'clover', eyebrow: 'CLOVER GAMES', title: ['Serveur', 'Minecraft.'], link: 'play.clovergames.fr ›', linkColor: a, stat: String(MODES.length), caption: 'modes, Java & Bedrock ensemble' })}`;
+${projectCopy({ icon: 'clover', eyebrow: 'CLOVER GAMES', title: ['Serveur', 'Minecraft.'], link: 'play.clovergames.fr ›', linkColor: a, stat: String(MODES.length), caption: 'modes, Java & Bedrock' })}`;
   // The icon squares pulse softly in turn, like status lights.
   const style = motion(`.pip{animation:pip 3s ease-in-out infinite}
 @keyframes pip{50%{fill-opacity:.3}}`);
@@ -417,7 +417,7 @@ for (const [name, make] of Object.entries(CARDS)) writeFileSync(new URL(`${name}
 let over = 0;
 const fits = (label, right, limit) => { if (right > limit) { over++; console.log(`OVER ${label}: ${Math.round(right)} / ${limit}`); } };
 for (const line of ['Serveur', 'Minecraft.', 'Streaming', 'sans pub.']) fits(line, X + measure(line, { size: 50, font: F.semi, tracking: -0.03 }), 420);
-fits('clover caption', X + measure('modes, Java & Bedrock ensemble', { size: 22 }), 420);
+fits('clover caption', X + measure('modes, Java & Bedrock', { size: 22 }), 420);
 fits('Mes commits.', X + measure('Mes commits.', { size: 40, font: F.semi, tracking: -0.025 }), 400 - X);
 for (const [label] of COMMITS) fits(label, X + 48 + measure(label, { size: 19, font: F.semi }), 400 - X - 44);
 fits(SKILLS_SUB, X + measure(SKILLS_SUB, { size: 22 }), 1200 - X);
