@@ -1,0 +1,13 @@
+{
+  "name": "kaysuto-profile-design",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "harfbuzzjs": "^1.6.3",
+    "lucide-static": "^1.61.0",
+    "simple-icons": "^16.35.0"
+  }
+}

@@ -1,0 +1,312 @@
+// Builds the profile images (../assets/*.svg). Run: npm run build
+// Card system adapted from github.com/BySolaire: black bento cards, text converted to outlines,
+// so the images look the same everywhere, with no font installed.
+// Expected fonts in design/fonts (Inter 4.1, https://github.com/rsms/inter/releases):
+// InterDisplay-Bold.ttf, Inter-SemiBold.ttf, Inter-Medium.ttf
+import * as hb from 'harfbuzzjs';
+import { readFileSync, writeFileSync } from 'node:fs';
+import * as si from 'simple-icons';
+
+const C = { card: ['#141416', '#08080a'], tile: '#1c1c1e', text: '#f5f5f7', secondary: '#a1a1a6', tertiary: '#86868b' };
+const G = {
+  aurora: ['#a78bfa', '#5eead4', '#30d158'], // brand: violet → mint → clover green
+  silver: ['#ffffff', '#c7c7cc'],
+  clover: ['#86efac', '#30d158'],
+  jelly: ['#5eead4', '#38bdf8'],
+  mirum: ['#ffd27a', '#ff9f0a'],
+  nohello: ['#7cc4ff', '#0a84ff'],
+  portfolio: ['#c4b5fd', '#f472b6'],
+};
+const GAP = 24, RADIUS = 34, PAD = 52;
+const M = GAP / 2; // each image carries half the gutter, so cards line up without CSS
+const X = M + PAD;
+
+const loadFont = name => {
+  const face = new hb.Face(new hb.Blob(readFileSync(new URL(`./fonts/${name}.ttf`, import.meta.url))));
+  return { hb: new hb.Font(face), upem: face.upem };
+};
+const F = { display: loadFont('InterDisplay-Bold'), semi: loadFont('Inter-SemiBold'), medium: loadFont('Inter-Medium') };
+const r1 = n => Math.round(n * 10) / 10;
+
+function shape(font, str, size, tracking) {
+  const buf = new hb.Buffer();
+  buf.addText(str);
+  buf.guessSegmentProperties();
+  hb.shape(font.hb, buf);
+  const k = size / font.upem, pos = buf.getGlyphPositions();
+  let pen = 0;
+  const glyphs = buf.getGlyphInfos().map((g, i) => {
+    const glyph = { id: g.codepoint, x: pen + pos[i].xOffset * k, y: pos[i].yOffset * k };
+    pen += pos[i].xAdvance * k + tracking * size;
+    return glyph;
+  });
+  return { glyphs, k, width: pen - tracking * size };
+}
+
+const measure = (str, { size, font = F.medium, tracking = 0 }) => shape(font, str, size, tracking).width;
+
+// One line of text → a single <path>, so a gradient spans the whole line.
+function text(str, { x, y, size, font = F.medium, tracking = 0, anchor = 'start', fill = C.text, extra = '' }) {
+  const { glyphs, k, width } = shape(font, str, size, tracking);
+  const x0 = anchor === 'middle' ? x - width / 2 : anchor === 'end' ? x - width : x;
+  const d = glyphs.map(g => font.hb.glyphToPath(g.id)
+    .replace(/(-?[\d.]+),(-?[\d.]+)/g, (_, px, py) => `${r1(x0 + g.x + px * k)},${r1(y - g.y - py * k)}`)).join('');
+  return `<path d="${d}" fill="${fill}"${extra}/>`;
+}
+
+const linear = (id, stops, [x1, y1, x2, y2] = [0, 0, 1, 0]) =>
+  `<linearGradient id="${id}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${stops.map((c, i) =>
+    `<stop offset="${i / (stops.length - 1)}" stop-color="${c}"/>`).join('')}</linearGradient>`;
+const radial = (id, cx, cy, r, stops) =>
+  `<radialGradient id="${id}" cx="${cx}" cy="${cy}" r="${r}" gradientUnits="userSpaceOnUse">${stops.map(([o, c, a]) =>
+    `<stop offset="${o}" stop-color="${c}" stop-opacity="${a}"/>`).join('')}</radialGradient>`;
+const blur = (id, s) => `<filter id="${id}" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="${s}"/></filter>`;
+
+const svgInner = path => {
+  const svg = readFileSync(new URL(path, import.meta.url), 'utf8');
+  return svg.slice(svg.indexOf('>', svg.indexOf('<svg')) + 1, svg.lastIndexOf('</svg>'));
+};
+const lucide = (name, x, y, size, color) =>
+  `<g transform="translate(${x} ${y}) scale(${size / 24})" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${svgInner(`./node_modules/lucide-static/icons/${name}.svg`)}</g>`;
+// Black brand logos (Next.js…) would vanish on the dark tile: draw them white.
+const logo = (icon, cx, cy, size) =>
+  `<path transform="translate(${cx - size / 2} ${cy - size / 2}) scale(${size / 24})" d="${icon.path}" fill="${icon.hex === '000000' ? '#fff' : `#${icon.hex}`}"/>`;
+const png = path => `data:image/png;base64,${readFileSync(new URL(path, import.meta.url)).toString('base64')}`;
+
+// App icons: the project's own mark where it has one, otherwise a Lucide glyph on its colour.
+const MARKS = {
+  // Jelly: 160 × 160 viewBox, ids prefixed so they cannot clash with the card's own.
+  jelly: { tile: '#0b1b1f', inner: s => `<g transform="scale(${r1(s / 160 * 1e4) / 1e4})">${svgInner('./logos/jelly.svg').replace(/id="([\w-]+)"/g, 'id="jl-$1"').replace(/url\(#([\w-]+)\)/g, 'url(#jl-$1)')}</g>`, scale: 34 / 44 },
+  clover: { tile: '#0f2416', inner: s => `<image width="${s}" height="${s}" href="${png('./logos/clover.png')}" style="image-rendering:pixelated"/>`, scale: 34 / 44 },
+  portfolio: { tile: '#1c1c1e', inner: s => `<g transform="scale(${s / 64})">${svgInner('./logos/portfolio.svg')}</g>`, scale: 1 },
+  mirum: { tile: '#2a1a05', glyph: ['swords', G.mirum[0]] },
+  nohello: { tile: '#071a2e', glyph: ['message-circle-off', G.nohello[0]] },
+};
+function appIcon(name, x, y, size = 44) {
+  const { tile, inner, scale = 1, glyph } = MARKS[name];
+  const s = size * scale, inset = (size - s) / 2;
+  const mark = glyph ? lucide(glyph[0], x + size / 2 - 12, y + size / 2 - 12, 24, glyph[1])
+    : `<clipPath id="ic-${name}"><rect x="${x}" y="${y}" width="${size}" height="${size}" rx="${size / 4}"/></clipPath><g clip-path="url(#ic-${name})"><g transform="translate(${r1(x + inset)} ${r1(y + inset)})">${inner(s)}</g></g>`;
+  return `<rect x="${x}" y="${y}" width="${size}" height="${size}" rx="${size / 4}" fill="${tile}"/>
+${mark}
+<rect x="${x + 0.5}" y="${y + 0.5}" width="${size - 1}" height="${size - 1}" rx="${size / 4 - 0.5}" fill="none" stroke="#fff" stroke-opacity=".12"/>`;
+}
+
+// Motion: slow ambient loops whose first frame is the finished design. Images can be shown with a
+// frozen timeline (hidden tabs, previews), so no animation may start from a hidden state.
+const motion = rules => `${rules}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}`;
+
+// Card: background, highlight on the top edge, content clipped to the rounded corners.
+function card(w, h, body, { defs = '', style = '' } = {}) {
+  const cw = w - 2 * M, ch = h - 2 * M, r = RADIUS;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+<defs>
+<clipPath id="clip"><rect x="${M}" y="${M}" width="${cw}" height="${ch}" rx="${r}"/></clipPath>
+${linear('fill', C.card, [0, 0, 0, 1])}
+<linearGradient id="edge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".4" stop-color="#fff" stop-opacity=".07"/><stop offset="1" stop-color="#fff" stop-opacity=".05"/></linearGradient>
+${defs}
+</defs>${style && `\n<style>${style}</style>`}
+<g clip-path="url(#clip)">
+<rect x="${M}" y="${M}" width="${cw}" height="${ch}" fill="url(#fill)"/>
+${body}
+</g>
+<rect x="${M + 0.5}" y="${M + 0.5}" width="${cw - 1}" height="${ch - 1}" rx="${r - 0.5}" fill="none" stroke="url(#edge)"/>
+</svg>
+`;
+}
+
+const TAGLINE = 'Des trucs simples, utiles et faciles à prendre en main.';
+
+// Header: an aurora rising over the horizon of a planet.
+function hero() {
+  const w = 1200, h = 640, cx = w / 2, hy = 476, R = 1600, [violet, mint, green] = G.aurora;
+  const planet = extra => `<circle cx="${cx}" cy="${hy + R}" r="${R}"${extra}/>`;
+  // A beam of light runs along the horizon. A circle's outline starts at its rightmost point and runs
+  // clockwise, so the top of the planet sits at 3/4 of the circumference: the dash enters left, leaves right.
+  const Cf = 2 * Math.PI * R, top = 0.75 * Cf, from = r1(-(top - 900)), to = r1(-(top + 640));
+  const beam = extra => planet(` class="beam" fill="none" stroke="url(#hot)" stroke-linecap="round" stroke-dasharray="260 ${r1(Cf)}" stroke-dashoffset="${from}"${extra}`);
+  const style = motion(`.atmo{animation:pulse 8s ease-in-out infinite}
+.star{transform-origin:${cx}px ${hy}px;animation:twinkle 4s ease-in-out infinite}
+.beam{animation:beam 9s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.7}}
+@keyframes twinkle{50%{opacity:.75;transform:scale(.8)}}
+@keyframes beam{50%,100%{stroke-dashoffset:${to}}}`);
+  const defs = [
+    `<radialGradient id="atmo" cx="${cx}" cy="${hy}" r="700" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 ${hy}) scale(1 .42) translate(0 ${-hy})"><stop offset="0" stop-color="${mint}" stop-opacity=".45"/><stop offset=".3" stop-color="${green}" stop-opacity=".16"/><stop offset=".7" stop-color="${violet}" stop-opacity=".06"/><stop offset="1" stop-color="${violet}" stop-opacity="0"/></radialGradient>`,
+    `<linearGradient id="rim" x1="0" y1="0" x2="${w}" y2="0" gradientUnits="userSpaceOnUse"><stop offset=".05" stop-color="${violet}" stop-opacity="0"/><stop offset=".3" stop-color="${violet}" stop-opacity=".75"/><stop offset=".5" stop-color="${mint}"/><stop offset=".7" stop-color="${green}" stop-opacity=".75"/><stop offset=".95" stop-color="${green}" stop-opacity="0"/></linearGradient>`,
+    `<linearGradient id="hot" x1="0" y1="0" x2="${w}" y2="0" gradientUnits="userSpaceOnUse"><stop offset=".08" stop-color="#e4dcff" stop-opacity="0"/><stop offset=".3" stop-color="#e4dcff" stop-opacity=".9"/><stop offset=".5" stop-color="#f0fffb"/><stop offset=".7" stop-color="#d6ffe2" stop-opacity=".9"/><stop offset=".92" stop-color="#d6ffe2" stop-opacity="0"/></linearGradient>`,
+    linear('title', G.silver, [0, 0, 0, 1]),
+    blur('md', 10), blur('sm', 2.5),
+    // The animated glow is blurred within the horizon band only, so each frame stays cheap.
+    `<filter id="band" filterUnits="userSpaceOnUse" x="0" y="${hy - 60}" width="${w}" height="${h - hy + 60}"><feGaussianBlur stdDeviation="7"/></filter>`,
+  ].join('\n');
+  const body = `<rect class="atmo" width="${w}" height="${h}" fill="url(#atmo)"/>
+${planet(' fill="#060607"')}
+${planet(' fill="none" stroke="url(#rim)" stroke-width="12" filter="url(#md)"')}
+${planet(' fill="none" stroke="url(#rim)" stroke-width="2"')}
+${beam(' stroke-width="12" opacity=".85" filter="url(#band)"')}
+${beam(' stroke-width="2.5"')}
+<g class="star"><ellipse cx="${cx}" cy="${hy}" rx="200" ry="1.5" fill="#d9fff4" opacity=".45" filter="url(#sm)"/>
+<circle cx="${cx}" cy="${hy}" r="16" fill="#fff" opacity=".6" filter="url(#md)"/>
+<circle cx="${cx}" cy="${hy}" r="4" fill="#fff"/></g>
+${text('@KAYSUTO · FRANCE', { x: cx, y: 118, size: 17, font: F.semi, tracking: 0.14, anchor: 'middle', fill: C.tertiary })}
+${text('Kimiya.', { x: cx, y: 300, size: 168, font: F.display, tracking: -0.04, anchor: 'middle', fill: 'url(#title)' })}
+${text(TAGLINE, { x: cx, y: 370, size: 36, font: F.medium, tracking: -0.012, anchor: 'middle', fill: C.secondary })}`;
+  return card(w, h, body, { defs, style });
+}
+
+// Shared copy of the big project cards: app icon and eyebrow, title, link, then the key figure at the bottom.
+function projectCopy({ icon, eyebrow, title, link, linkColor, stat, caption }) {
+  return [
+    appIcon(icon, X, 64),
+    text(eyebrow, { x: X + 60, y: 92, size: 17, font: F.semi, tracking: 0.14, fill: C.tertiary }),
+    ...title.map((line, i) => text(line, { x: X, y: 178 + i * 56, size: 50, font: F.display, tracking: -0.022 })),
+    text(link, { x: X, y: 178 + title.length * 56 + 2, size: 22, font: F.medium, fill: linkColor }),
+    text(stat, { x: X - 5, y: 488, size: 168, font: F.display, tracking: -0.045, fill: 'url(#stat)' }),
+    text(caption, { x: X, y: 536, size: 22, font: F.medium, fill: C.secondary }),
+  ].join('\n');
+}
+
+// The six Clover Games servers (Pterodactyl panel, 2026-10-21).
+const SERVERS = [['Lobby', 'house'], ['Practice', 'swords'], ['PvPSoup', 'soup'], ['SkyPvP', 'cloudy'], ['Créatif', 'palette'], ['BedWars', 'bed-double']];
+
+function clover() {
+  const [a, b] = G.clover, sx = 430, tw = 162, th = 128;
+  const defs = [linear('stat', G.clover), radial('glow', 760, 600, 420, [[0, b, 0.2], [1, b, 0]])].join('\n');
+  const tiles = SERVERS.map(([name, icon], i) => {
+    const x = sx + (i % 2) * (tw + 12), y = 72 + Math.floor(i / 2) * (th + 12);
+    return `<rect x="${x}" y="${y}" width="${tw}" height="${th}" rx="18" fill="#161618"/>
+<rect x="${x + 0.5}" y="${y + 0.5}" width="${tw - 1}" height="${th - 1}" rx="17.5" fill="none" stroke="#fff" stroke-opacity=".09"/>
+<rect class="pip" x="${x + 22}" y="${y + 22}" width="40" height="40" rx="11" fill="${a}" fill-opacity=".14" style="animation-delay:${i * 0.5}s"/>
+${lucide(icon, x + 30, y + 30, 24, a)}
+${text(name, { x: x + 22, y: y + 100, size: 20, font: F.semi })}`;
+  }).join('\n');
+  const body = `<rect width="800" height="600" fill="url(#glow)"/>
+${tiles}
+${projectCopy({ icon: 'clover', eyebrow: 'CLOVER GAMES', title: ['Mini-jeux', 'Minecraft.'], link: 'clovergames.fr ›', linkColor: a, stat: '6', caption: 'serveurs multiplateformes' })}`;
+  // Each server tile pulses softly in turn, like a status light.
+  const style = motion(`.pip{animation:pip 3s ease-in-out infinite}
+@keyframes pip{50%{fill-opacity:.32}}`);
+  return card(800, 600, body, { defs, style });
+}
+
+function jelly() {
+  const [a] = G.jelly, sx = 470, sy = 72, sw = 440, sh = 416, mid = (sx + 788) / 2; // 788: visible right edge of the card
+  const defs = [
+    linear('stat', G.jelly),
+    linear('bar', G.jelly),
+    radial('glow', 760, 600, 420, [[0, a, 0.2], [1, a, 0]]),
+    linear('sky', ['#0f4a47', '#08202b'], [0, 0, 0, 1]),
+    '<linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".75"/></linearGradient>',
+    `<clipPath id="screen"><rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" rx="20"/></clipPath>`,
+    blur('moon', 14),
+  ].join('\n');
+  // A stylised film still: sky, moon, two mountain ranges, a subtitle and the progress bar.
+  const screen = `<g clip-path="url(#screen)">
+<g class="kb"><rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" fill="url(#sky)"/>
+<circle cx="${sx + 250}" cy="${sy + 70}" r="40" fill="#a7f3e8" opacity=".55" filter="url(#moon)"/>
+<circle cx="${sx + 250}" cy="${sy + 70}" r="22" fill="#e6fffb"/>
+<path d="M${sx} ${sy + 236}L${sx + 70} ${sy + 186}L${sx + 130} ${sy + 218}L${sx + 210} ${sy + 156}L${sx + 300} ${sy + 226}L${sx + 370} ${sy + 186}L${sx + sw} ${sy + 232}V${sy + sh}H${sx}Z" fill="#0d3d3c"/>
+<path d="M${sx} ${sy + 290}L${sx + 90} ${sy + 246}L${sx + 170} ${sy + 278}L${sx + 260} ${sy + 236}L${sx + 350} ${sy + 284}L${sx + sw} ${sy + 260}V${sy + sh}H${sx}Z" fill="#06211f"/></g>
+<rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" fill="url(#shade)"/>
+<rect x="${sx + 22}" y="${sy + 22}" width="62" height="26" rx="13" fill="#fff" fill-opacity=".16"/>
+${text('1080p', { x: sx + 53, y: sy + 40, size: 13, font: F.semi, anchor: 'middle', fill: '#fff' })}
+<circle cx="${mid}" cy="${sy + 168}" r="31" fill="#fff" fill-opacity=".92"/>
+<path d="M${mid - 8} ${sy + 153}v30l25-15z" fill="#0b0b0d"/>
+<rect x="${mid - 80}" y="${sy + sh - 116}" width="160" height="30" rx="8" fill="#000" fill-opacity=".55"/>
+${text('Zéro pub. Promis.', { x: mid, y: sy + sh - 96, size: 15, font: F.semi, anchor: 'middle', fill: '#fff' })}
+${text('42:17', { x: sx + 24, y: sy + sh - 44, size: 14, font: F.semi, fill: '#fff', extra: ' fill-opacity=".8"' })}
+<rect x="${sx + 24}" y="${sy + sh - 32}" width="${sw}" height="5" rx="2.5" fill="#fff" fill-opacity=".22"/>
+<rect class="p" x="${sx + 24}" y="${sy + sh - 32}" width="150" height="5" rx="2.5" fill="url(#bar)"/>
+<circle class="k" cx="${sx + 174}" cy="${sy + sh - 29.5}" r="8" fill="#fff"/>
+</g>
+<rect x="${sx + 0.5}" y="${sy + 0.5}" width="${sw - 1}" height="${sh - 1}" rx="19.5" fill="none" stroke="#fff" stroke-opacity=".14"/>`;
+  const body = `<rect width="800" height="600" fill="url(#glow)"/>
+${screen}
+${projectCopy({ icon: 'jelly', eyebrow: 'JELLY', title: ['Streaming', 'sans pub.'], link: 'beta.playjelly.fr ›', linkColor: a, stat: '748', caption: 'commits sur Jelly' })}`;
+  // Slow zoom on the film still; playback keeps going: the fill (150 wide) grows 1.8× in a minute and the knob follows.
+  const style = motion(`.kb{transform-origin:${sx + sw / 2}px ${sy + sh / 2}px;animation:kb 24s ease-in-out infinite alternate}
+.p{transform-origin:${sx + 24}px 0;animation:play 60s linear infinite}
+.k{animation:knob 60s linear infinite}
+@keyframes kb{to{transform:scale(1.08)}}
+@keyframes play{to{transform:scaleX(1.8)}}
+@keyframes knob{to{transform:translateX(120px)}}`);
+  return card(800, 600, body, { defs, style });
+}
+
+const TOOLS = [[si.siTypescript, 'TypeScript'], [si.siReact, 'React'], [si.siNextdotjs, 'Next.js'], [si.siTailwindcss, 'Tailwind'], [si.siDocker, 'Docker'], [si.siProxmox, 'Proxmox']];
+const STACK_MORE = ['Et aussi PHP, MySQL, Nginx,', 'Tailscale, Grafana, Vercel…'];
+
+function stack() {
+  const size = 72, step = (400 - 2 * X - size) / 2;
+  const grid = TOOLS.map(([icon, label], i) => {
+    const x = X + (i % 3) * step, y = 196 + Math.floor(i / 3) * 136;
+    return `<rect x="${x}" y="${y}" width="${size}" height="${size}" rx="18" fill="${C.tile}"/>
+<rect x="${x + 0.5}" y="${y + 0.5}" width="${size - 1}" height="${size - 1}" rx="17.5" fill="none" stroke="#fff" stroke-opacity=".1"/>
+${logo(icon, x + size / 2, y + size / 2, 34)}
+${text(label, { x: x + size / 2, y: y + size + 30, size: 17, font: F.medium, anchor: 'middle', fill: C.secondary })}`;
+  }).join('\n');
+  const body = `${text('Mon stack.', { x: X, y: 114, size: 40, font: F.display, tracking: -0.02 })}
+${grid}
+${STACK_MORE.map((line, i) => text(line, { x: X, y: 510 + i * 26, size: 18, font: F.medium, fill: C.tertiary })).join('\n')}`;
+  return card(400, 600, body);
+}
+
+// À propos, in the style of an iPhone settings list: one coloured icon per row.
+const ABOUT = [
+  ['Otaku', 'trop d’animés et de mangas', 'tv', ['#ff6482', '#ff375f']],
+  ['Builder', 'web, devops, hosting, gaming', 'hammer', ['#4aa8ff', '#0a84ff']],
+  ['Carburant', 'une Monster bien fraîche', 'zap', ['#4be38a', '#30d158']],
+  ['Équipe', 'ma femme à mes côtés', 'heart', ['#c4b5fd', '#a78bfa']],
+];
+
+function about() {
+  const defs = ABOUT.map(([, , , c], i) => linear(`t${i}`, c, [0, 0, 0, 1])).join('\n');
+  const rows = ABOUT.map(([label, sub, icon], i) => {
+    const base = 536 - (ABOUT.length - 1 - i) * 80, y = base - 38; // the last row lands on the shared caption baseline (536)
+    return `<rect x="${X}" y="${y}" width="40" height="40" rx="10" fill="url(#t${i})"/>
+<rect x="${X + 0.5}" y="${y + 0.5}" width="39" height="39" rx="9.5" fill="none" stroke="#fff" stroke-opacity=".22"/>
+${lucide(icon, X + 10, y + 10, 20, '#fff')}
+${text(label, { x: X + 54, y: base - 20, size: 19, font: F.semi })}
+${text(sub, { x: X + 54, y: base, size: 15, font: F.medium, fill: C.tertiary })}`;
+  }).join('\n');
+  const body = `${text('À propos.', { x: X, y: 114, size: 40, font: F.display, tracking: -0.02 })}
+${text('24 ans, 2 000+ commits.', { x: X, y: 150, size: 17, font: F.medium, fill: C.tertiary })}
+${text('Profil AniList ›', { x: X, y: 186, size: 17, font: F.medium, fill: '#ff6482' })}
+${rows}`;
+  return card(400, 600, body, { defs });
+}
+
+// Small project cards: icon, eyebrow, two-line title, link on the bottom baseline.
+const SMALL = {
+  mirum: { eyebrow: 'MIRUM ORBIS', title: ['MMORPG 2D,', 'l’univers d’Ereda.'], link: 'mirum-orbis.com ›', color: G.mirum },
+  nohello: { eyebrow: 'NOHELLO', title: ['L’étiquette du', 'chat productif.'], link: 'nohello.fr ›', color: G.nohello },
+  portfolio: { eyebrow: 'PORTFOLIO', title: ['Mes réalisations', 'et contact pro.'], link: 'kaysuto.fr ›', color: G.portfolio },
+};
+const smallCard = name => () => {
+  const { eyebrow, title, link, color } = SMALL[name], h = 360;
+  const defs = radial('glow', 360, h, 300, [[0, color[1], 0.18], [1, color[1], 0]]);
+  const body = `<rect width="400" height="${h}" fill="url(#glow)"/>
+${appIcon(name, X, 64)}
+${text(eyebrow, { x: X + 60, y: 92, size: 17, font: F.semi, tracking: 0.14, fill: C.tertiary })}
+${title.map((line, i) => text(line, { x: X, y: 180 + i * 40, size: 32, font: F.display, tracking: -0.02 })).join('\n')}
+${text(link, { x: X, y: h - M - PAD, size: 20, font: F.medium, fill: color[0] })}`;
+  return card(400, h, body, { defs });
+};
+
+const out = new URL('../assets/', import.meta.url);
+const CARDS = { hero, clover, stack, about, jelly, mirum: smallCard('mirum'), nohello: smallCard('nohello'), portfolio: smallCard('portfolio') };
+for (const [name, make] of Object.entries(CARDS)) writeFileSync(new URL(`${name}.svg`, out), make());
+
+// Layout guards: titles must stay clear of the visuals, narrow-card copy must fit its card.
+let over = 0;
+const fits = (label, right, limit) => { if (right > limit) over++; console.log(`${right <= limit ? 'ok  ' : 'OVER'} ${label}: ${Math.round(right)} / ${limit}`); };
+fits('tagline', 600 + measure(TAGLINE, { size: 36, tracking: -0.012 }) / 2, 1200 - X);
+for (const line of ['Mini-jeux', 'Minecraft.', 'Streaming', 'sans pub.']) fits(line, X + measure(line, { size: 50, font: F.display, tracking: -0.022 }), 450);
+fits('serveurs multiplateformes', X + measure('serveurs multiplateformes', { size: 22 }), 450);
+for (const line of STACK_MORE) fits(line, X + measure(line, { size: 18 }), 400 - X);
+for (const [label, sub] of ABOUT) fits(sub, X + 54 + measure(sub, { size: 15 }), 400 - X), fits(label, X + 54 + measure(label, { size: 19, font: F.semi }), 400 - X);
+for (const { title } of Object.values(SMALL)) for (const line of title) fits(line, X + measure(line, { size: 32, font: F.display, tracking: -0.02 }), 400 - X);
+for (const [name] of SERVERS) fits(name, 430 + 22 + measure(name, { size: 20, font: F.semi }), 430 + 162 - 16);
+if (over) process.exitCode = 1;
