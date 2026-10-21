@@ -1,11 +1,11 @@
 {
   "updated": "2026-10-22",
-  "total": 2436,
+  "total": 2460,
   "since": "2020",
-  "current": 2,
+  "current": 3,
   "longest": 17,
-  "commitsThisYear": 375,
-  "pullRequests": 43,
+  "commitsThisYear": 381,
+  "pullRequests": 17,
   "stars": 6,
   "weeks": [
     [
@@ -246,8 +246,8 @@
       0,
       0,
       2,
-      1,
-      3,
+      2,
+      2,
       1,
       2
     ],
@@ -470,8 +470,8 @@
     [
       6,
       11,
-      4,
-      3,
+      5,
+      2,
       1,
       15,
       44
@@ -480,8 +480,7 @@
       4,
       0,
       45,
-      5,
-      0
+      11
     ]
   ],
   "repoCommits": {
@@ -492,7 +491,7 @@
     "theclovergames/clover-bot": 37,
     "theclovergames/wiki": 58,
     "theclovergames/guide": 10,
-    "Kaysuto/Kaysuto": 83,
+    "Kaysuto/Kaysuto": 107,
     "Kaysuto/no-hello": 35,
     "Kaysuto/pelican-installation-fr": 83,
     "Kaysuto/pterodactyl-installation-fr": 21,
@@ -506,7 +505,7 @@
     "Jelly": 748,
     "Mirum Orbis": 464,
     "Clover Games": 374,
-    "Guides & outils": 260,
+    "Guides & outils": 284,
     "Portfolio": 162
   }
 }
