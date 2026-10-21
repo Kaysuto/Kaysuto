@@ -69,8 +69,16 @@ const svgInner = path => {
 const lucide = (name, x, y, size, color) =>
   `<g transform="translate(${x} ${y}) scale(${size / 24})" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${svgInner(`./node_modules/lucide-static/icons/${name}.svg`)}</g>`;
 // Black brand logos (Next.js…) would vanish on the dark tile: draw them white.
+// Dark brand colours fade into the tile: black logos turn white, deep blues get tinted towards white.
+function onDark(hex) {
+  const rgb = [0, 2, 4].map(i => parseInt(hex.slice(i, i + 2), 16));
+  const l = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+  if (l < 60) return '#fff';
+  if (l >= 120) return `#${hex}`;
+  return `rgb(${rgb.map(c => Math.round(c + (255 - c) * 0.45)).join(',')})`;
+}
 const logo = (icon, cx, cy, size) =>
-  `<path transform="translate(${cx - size / 2} ${cy - size / 2}) scale(${size / 24})" d="${icon.path}" fill="${icon.hex === '000000' ? '#fff' : `#${icon.hex}`}"/>`;
+  `<path transform="translate(${cx - size / 2} ${cy - size / 2}) scale(${size / 24})" d="${icon.path}" fill="${onDark(icon.hex)}"/>`;
 const png = path => `data:image/png;base64,${readFileSync(new URL(path, import.meta.url)).toString('base64')}`;
 
 // App icons: the project's own mark where it has one, otherwise a Lucide glyph on its colour.
@@ -168,8 +176,9 @@ function projectCopy({ icon, eyebrow, title, link, linkColor, stat, caption }) {
   ].join('\n');
 }
 
-// The six Clover Games servers (Pterodactyl panel, 2026-10-21).
-const SERVERS = [['Lobby', 'house'], ['Practice', 'swords'], ['PvPSoup', 'soup'], ['SkyPvP', 'cloudy'], ['Créatif', 'palette'], ['BedWars', 'bed-double']];
+// The Clover Games game modes (the lobby is not one), plus the in-house launcher.
+const MODES = [['Practice', 'swords'], ['PvPSoup', 'soup'], ['SkyPvP', 'cloudy'], ['Créatif', 'palette'], ['BedWars', 'bed-double']];
+const SERVERS = [...MODES, ['Launcher', 'monitor-down']];
 
 function clover() {
   const [a, b] = G.clover, sx = 430, tw = 162, th = 128;
@@ -184,7 +193,7 @@ ${text(name, { x: x + 22, y: y + 100, size: 20, font: F.semi })}`;
   }).join('\n');
   const body = `<rect width="800" height="600" fill="url(#glow)"/>
 ${tiles}
-${projectCopy({ icon: 'clover', eyebrow: 'CLOVER GAMES', title: ['Mini-jeux', 'Minecraft.'], link: 'clovergames.fr ›', linkColor: a, stat: '6', caption: 'serveurs multiplateformes' })}`;
+${projectCopy({ icon: 'clover', eyebrow: 'CLOVER GAMES', title: ['Mini-jeux', 'Minecraft.'], link: 'clovergames.fr ›', linkColor: a, stat: String(MODES.length), caption: 'modes de jeu multiplateformes' })}`;
   // Each server tile pulses softly in turn, like a status light.
   const style = motion(`.pip{animation:pip 3s ease-in-out infinite}
 @keyframes pip{50%{fill-opacity:.32}}`);
@@ -235,30 +244,85 @@ ${projectCopy({ icon: 'jelly', eyebrow: 'JELLY', title: ['Streaming', 'sans pub.
   return card(800, 600, body, { defs, style });
 }
 
-const TOOLS = [[si.siTypescript, 'TypeScript'], [si.siReact, 'React'], [si.siNextdotjs, 'Next.js'], [si.siTailwindcss, 'Tailwind'], [si.siDocker, 'Docker'], [si.siProxmox, 'Proxmox']];
-const STACK_MORE = ['Et aussi PHP, MySQL, Nginx,', 'Tailscale, Grafana, Vercel…'];
+// What the projects are really built with, read from their package.json / pom.xml on 2026-10-21.
+const SKILLS = [
+  ['FRONT-END', [[si.siTypescript, 'TypeScript'], [si.siReact, 'React'], [si.siNextdotjs, 'Next.js'], [si.siTailwindcss, 'Tailwind CSS']]],
+  ['BACK & DONNÉES', [[si.siSupabase, 'Supabase'], [si.siPostgresql, 'PostgreSQL'], [si.siMysql, 'MySQL'], [si.siStripe, 'Stripe']]],
+  ['JEU & APPS', [[si.siOpenjdk, 'Java · Paper'], [si.siTauri, 'Rust · Tauri'], [si.siDiscorddotjs, 'Discord.js'], [si.siNodedotjs, 'Node.js']]],
+  ['INFRA & DEVOPS', [[si.siDocker, 'Docker'], [si.siPterodactyl, 'Pterodactyl'], [si.siProxmox, 'Proxmox'], [si.siNginx, 'Nginx']]],
+];
+const SKILLS_SUB = 'Du site au serveur de jeu, tout tourne en production.';
 
-function stack() {
-  const size = 72, step = (400 - 2 * X - size) / 2;
-  const grid = TOOLS.map(([icon, label], i) => {
-    const x = X + (i % 3) * step, y = 196 + Math.floor(i / 3) * 136;
-    return `<rect x="${x}" y="${y}" width="${size}" height="${size}" rx="18" fill="${C.tile}"/>
-<rect x="${x + 0.5}" y="${y + 0.5}" width="${size - 1}" height="${size - 1}" rx="17.5" fill="none" stroke="#fff" stroke-opacity=".1"/>
-${logo(icon, x + size / 2, y + size / 2, 34)}
-${text(label, { x: x + size / 2, y: y + size + 30, size: 17, font: F.medium, anchor: 'middle', fill: C.secondary })}`;
+// Full-width card: four columns, one per domain, each a list of logo tiles.
+function skills() {
+  const w = 1200, h = 560, col = (w - 2 * X) / SKILLS.length;
+  const defs = radial('glow', 1100, 0, 520, [[0, G.aurora[0], 0.16], [1, G.aurora[0], 0]]);
+  const cols = SKILLS.map(([eyebrow, tools], c) => {
+    const x = X + c * col;
+    return [text(eyebrow, { x, y: 236, size: 17, font: F.semi, tracking: 0.14, fill: C.tertiary }),
+      ...tools.map(([icon, label], i) => {
+        const y = 260 + i * 62; // the last tile ends on the bottom padding (496)
+        return `<rect x="${x}" y="${y}" width="48" height="48" rx="12" fill="${C.tile}"/>
+<rect x="${x + 0.5}" y="${y + 0.5}" width="47" height="47" rx="11.5" fill="none" stroke="#fff" stroke-opacity=".1"/>
+${logo(icon, x + 24, y + 24, 24)}
+${text(label, { x: x + 64, y: y + 31, size: 20, font: F.semi })}`;
+      })].join('\n');
   }).join('\n');
-  const body = `${text('Mon stack.', { x: X, y: 114, size: 40, font: F.display, tracking: -0.02 })}
-${grid}
-${STACK_MORE.map((line, i) => text(line, { x: X, y: 510 + i * 26, size: 18, font: F.medium, fill: C.tertiary })).join('\n')}`;
-  return card(400, 600, body);
+  const body = `<rect width="${w}" height="${h}" fill="url(#glow)"/>
+${text('Ce que je maîtrise.', { x: X, y: 120, size: 50, font: F.display, tracking: -0.022 })}
+${text(SKILLS_SUB, { x: X, y: 160, size: 22, font: F.medium, fill: C.secondary })}
+${cols}`;
+  return card(w, h, body, { defs });
+}
+
+// Commits authored on GitHub, by project (2026-10-21; the BySolaire/playjelly mirror is not counted twice).
+const COMMITS = [
+  ['Jelly', 748, 'play', G.jelly],
+  ['Mirum Orbis', 464, 'swords', G.mirum],
+  ['Clover Games', 374, 'clover', G.clover],
+  ['Guides & outils', 260, 'book-open-text', G.nohello],
+  ['Portfolio', 162, 'user-round', G.portfolio],
+];
+
+// Breakdown in the style of iPhone storage: one segmented bar, then one row per project.
+function commits() {
+  const total = COMMITS.reduce((n, [, count]) => n + count, 0), width = 400 - 2 * X, by = 212;
+  let cursor = X;
+  const bar = COMMITS.map(([, count, , [, color]], i) => {
+    const w = count / total * width, gap = i < COMMITS.length - 1 ? 3 : 0;
+    const seg = `<rect x="${r1(cursor)}" y="${by}" width="${r1(w - gap)}" height="12" fill="${color}"/>`;
+    cursor += w;
+    return seg;
+  }).join('');
+  const defs = [
+    `<clipPath id="bar"><rect x="${X}" y="${by}" width="${width}" height="12" rx="6"/></clipPath>`,
+    ...COMMITS.map(([, , , c], i) => linear(`t${i}`, c, [0, 0, 0, 1])),
+    '<linearGradient id="shine"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>',
+  ].join('\n');
+  const rows = COMMITS.map(([label, count, icon], i) => {
+    const base = 304 + i * 58, y = base - 24; // the last row lands on the shared caption baseline (536)
+    return `<rect x="${X}" y="${y}" width="34" height="34" rx="9" fill="url(#t${i})"/>
+<rect x="${X + 0.5}" y="${y + 0.5}" width="33" height="33" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".22"/>
+${lucide(icon, X + 8, y + 8, 18, '#fff')}
+${text(label, { x: X + 48, y: base, size: 19, font: F.semi })}
+${text(String(count), { x: 400 - X, y: base, size: 19, font: F.medium, anchor: 'end', fill: C.secondary })}`;
+  }).join('\n');
+  const body = `${text('Mes commits.', { x: X, y: 114, size: 40, font: F.display, tracking: -0.02 })}
+${text(`${total.toLocaleString('fr-FR')} sur GitHub, par projet.`, { x: X, y: 150, size: 17, font: F.medium, fill: C.tertiary })}
+<g clip-path="url(#bar)">${bar}<rect class="shine" x="${X - 90}" y="${by}" width="60" height="12" fill="url(#shine)"/></g>
+${rows}`;
+  // A soft highlight sweeps across the bar every 6 s, starting outside it.
+  const style = motion(`.shine{animation:shine 6s ease-in-out infinite}
+@keyframes shine{45%,100%{transform:translateX(${width + 120}px)}}`);
+  return card(400, 600, body, { defs, style });
 }
 
 // À propos, in the style of an iPhone settings list: one coloured icon per row.
 const ABOUT = [
   ['Otaku', 'trop d’animés et de mangas', 'tv', ['#ff6482', '#ff375f']],
   ['Builder', 'web, devops, hosting, gaming', 'hammer', ['#4aa8ff', '#0a84ff']],
-  ['Carburant', 'une Monster bien fraîche', 'zap', ['#4be38a', '#30d158']],
-  ['Équipe', 'ma femme à mes côtés', 'heart', ['#c4b5fd', '#a78bfa']],
+  ['Partage', 'des docs claires pour aider', 'book-open-text', ['#c4b5fd', '#a78bfa']],
+  ['Énergie', 'une Monster et ma femme', 'zap', ['#4be38a', '#30d158']],
 ];
 
 function about() {
@@ -272,7 +336,7 @@ ${text(label, { x: X + 54, y: base - 20, size: 19, font: F.semi })}
 ${text(sub, { x: X + 54, y: base, size: 15, font: F.medium, fill: C.tertiary })}`;
   }).join('\n');
   const body = `${text('À propos.', { x: X, y: 114, size: 40, font: F.display, tracking: -0.02 })}
-${text('24 ans, 2 000+ commits.', { x: X, y: 150, size: 17, font: F.medium, fill: C.tertiary })}
+${text('24 ans, je fabrique des trucs.',{ x: X, y: 150, size: 17, font: F.medium, fill: C.tertiary })}
 ${text('Profil AniList ›', { x: X, y: 186, size: 17, font: F.medium, fill: '#ff6482' })}
 ${rows}`;
   return card(400, 600, body, { defs });
@@ -296,7 +360,7 @@ ${text(link, { x: X, y: h - M - PAD, size: 20, font: F.medium, fill: color[0] })
 };
 
 const out = new URL('../assets/', import.meta.url);
-const CARDS = { hero, clover, stack, about, jelly, mirum: smallCard('mirum'), nohello: smallCard('nohello'), portfolio: smallCard('portfolio') };
+const CARDS = { hero, clover, commits, skills, about, jelly, mirum: smallCard('mirum'), nohello: smallCard('nohello'), portfolio: smallCard('portfolio') };
 for (const [name, make] of Object.entries(CARDS)) writeFileSync(new URL(`${name}.svg`, out), make());
 
 // Layout guards: titles must stay clear of the visuals, narrow-card copy must fit its card.
@@ -304,8 +368,11 @@ let over = 0;
 const fits = (label, right, limit) => { if (right > limit) over++; console.log(`${right <= limit ? 'ok  ' : 'OVER'} ${label}: ${Math.round(right)} / ${limit}`); };
 fits('tagline', 600 + measure(TAGLINE, { size: 36, tracking: -0.012 }) / 2, 1200 - X);
 for (const line of ['Mini-jeux', 'Minecraft.', 'Streaming', 'sans pub.']) fits(line, X + measure(line, { size: 50, font: F.display, tracking: -0.022 }), 450);
-fits('serveurs multiplateformes', X + measure('serveurs multiplateformes', { size: 22 }), 450);
-for (const line of STACK_MORE) fits(line, X + measure(line, { size: 18 }), 400 - X);
+fits('modes de jeu multiplateformes', X + measure('modes de jeu multiplateformes', { size: 22 }), 450);
+fits('commits caption', X + measure('2 008 sur GitHub, par projet.', { size: 17 }), 400 - X);
+for (const [label] of COMMITS) fits(label, X + 48 + measure(label, { size: 19, font: F.semi }), 400 - X - 50);
+fits(SKILLS_SUB, X + measure(SKILLS_SUB, { size: 22 }), 1200 - X);
+for (const [, tools] of SKILLS) for (const [, label] of tools) fits(label, 64 + measure(label, { size: 20, font: F.semi }), (1200 - 2 * X) / SKILLS.length - 16);
 for (const [label, sub] of ABOUT) fits(sub, X + 54 + measure(sub, { size: 15 }), 400 - X), fits(label, X + 54 + measure(label, { size: 19, font: F.semi }), 400 - X);
 for (const { title } of Object.values(SMALL)) for (const line of title) fits(line, X + measure(line, { size: 32, font: F.display, tracking: -0.02 }), 400 - X);
 for (const [name] of SERVERS) fits(name, 430 + 22 + measure(name, { size: 20, font: F.semi }), 430 + 162 - 16);
