@@ -100,7 +100,8 @@ const png = path => `data:image/png;base64,${readFileSync(new URL(path, import.m
 const MARKS = {
   // Jelly: 160 × 160 viewBox, ids prefixed so they cannot clash with the card's own.
   jelly: { tile: '#0b1b1f', inner: s => `<g transform="scale(${r1(s / 160 * 1e4) / 1e4})">${svgInner('./logos/jelly.svg').replace(/id="([\w-]+)"/g, 'id="jl-$1"').replace(/url\(#([\w-]+)\)/g, 'url(#jl-$1)')}</g>`, scale: 34 / 44 },
-  clover: { tile: '#0f2416', inner: s => `<image width="${s}" height="${s}" href="${png('./logos/clover.png')}" style="image-rendering:pixelated"/>`, scale: 34 / 44 },
+  // Official Clover Games icon: the favicon of clovergames.fr (siteweb/src/app/icon.png, 64 × 64).
+  clover: { tile: '#0f2416', inner: s => `<image width="${s}" height="${s}" href="${png('./logos/clover.png')}"/>`, scale: 40 / 44 },
   // kaysuto.fr favicon: 32 × 32 viewBox, transparent, ids prefixed like Jelly's.
   portfolio: { tile: '#1a110d', inner: s => `<g transform="scale(${r1(s / 32 * 1e4) / 1e4})">${svgInner('./logos/portfolio.svg').replace(/id="([\w-]+)"/g, 'id="pf-$1"').replace(/url\(#([\w-]+)\)/g, 'url(#pf-$1)')}</g>`, scale: 38 / 44 },
   mirum: { tile: '#2a1d05', glyph: ['swords', G.mirum[0]] },
