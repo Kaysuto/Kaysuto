@@ -169,12 +169,31 @@ function hero() {
   const w = 1200, h = 640, cx = w / 2, hy = 476, R = 1600, sy = hy + 7; // the sun sits just behind the limb, only its top and its glow show
   const planet = extra => `<circle cx="${cx}" cy="${hy + R}" r="${R}"${extra}/>`;
   const rand = rng(7);
-  // Stars in the sky, fewer and fainter near the sun's glare.
-  const stars = Array.from({ length: 110 }, () => {
-    const x = rand() * w, y = 20 + rand() * (hy - 60), glare = Math.hypot(x - cx, (y - sy) * 1.6) < 360;
-    const o = r1((glare ? 0.12 : 0.25) + rand() * (glare ? 0.15 : 0.5));
-    return `<circle${rand() < 0.15 ? ' class="tw"' : ''} cx="${r1(x)}" cy="${r1(y)}" r="${r1(0.5 + rand() * 0.9)}" fill="#fff6ea" opacity="${o}"/>`;
+  // Starfield in three depths: faint dust, ordinary stars in their real colours (blue-white to amber),
+  // and a few bright ones with a soft halo that twinkle at their own pace. All of them stay above the
+  // limb and fade in the sun's glare.
+  const srand = rng(21), TINTS = ['#ffffff', '#fff6ea', '#ffe4c2', '#ffd3a0', '#dfe8ff', '#cfdcff'];
+  const place = () => {
+    for (;;) {
+      const x = 16 + srand() * (w - 32), y = 18 + srand() * (hy - 20), dx = x - cx;
+      if (y > hy + R - Math.sqrt(R * R - dx * dx) - 8) continue;
+      return { x, y, dim: Math.min(1, Math.hypot(dx, (y - sy) * 1.7) / 420) };
+    }
+  };
+  const dust = Array.from({ length: 240 }, () => {
+    const { x, y, dim } = place();
+    return `<circle cx="${r1(x)}" cy="${r1(y)}" r="${r1(0.3 + srand() * 0.35)}" fill="#fff6ea" opacity="${r1((0.08 + srand() * 0.25) * dim)}"/>`;
   }).join('');
+  const normal = Array.from({ length: 90 }, () => {
+    const { x, y, dim } = place(), tint = TINTS[Math.floor(srand() * TINTS.length)];
+    return `<circle cx="${r1(x)}" cy="${r1(y)}" r="${r1(0.6 + srand() ** 2 * 0.8)}" fill="${tint}" opacity="${r1((0.35 + srand() * 0.5) * dim)}"/>`;
+  }).join('');
+  const bright = Array.from({ length: 11 }, () => {
+    const { x, y, dim } = place(), tint = TINTS[Math.floor(srand() * TINTS.length)];
+    const anim = `animation-duration:${r1(2.5 + srand() * 3)}s;animation-delay:-${r1(srand() * 5)}s`;
+    return `<g class="tw" style="${anim}" opacity="${r1(0.55 + 0.45 * dim)}"><circle cx="${r1(x)}" cy="${r1(y)}" r="${r1(4 + srand() * 3)}" fill="${tint}" opacity=".24" filter="url(#sm)"/><circle cx="${r1(x)}" cy="${r1(y)}" r="${r1(1.3 + srand() * 0.7)}" fill="${tint}"/></g>`;
+  }).join('');
+  const stars = `<rect width="${w}" height="${hy}" filter="url(#milky)" mask="url(#milkyway)" opacity=".2"/>${dust}${normal}${bright}`;
   // City lights on the night side, away from the sunlit arc.
   const cities = Array.from({ length: 160 }, () => {
     const x = 40 + rand() * (w - 80), dx = x - cx, y = hy + R - Math.sqrt(R * R - dx * dx) + 10 + rand() ** 1.6 * 140;
@@ -188,6 +207,10 @@ function hero() {
   const caretX = cx - 8 + line.width / 2 + 9;
   const defs = [
     `<clipPath id="earth">${planet('')}</clipPath>`,
+    // A faint Milky Way: stretched noise kept to a tilted band across the sky.
+    `<filter id="milky" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".014 .035" numOctaves="5" seed="5"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 .94  0 0 0 0 .86  1.5 0 0 0 -.62"/></filter>`,
+    `<linearGradient id="mw" x1="0" y1="0" x2="0" y2="${hy}" gradientUnits="userSpaceOnUse" gradientTransform="rotate(-16 ${cx} ${hy / 2})"><stop offset="0" stop-color="#000"/><stop offset=".14" stop-color="#fff"/><stop offset=".22" stop-color="#fff"/><stop offset=".4" stop-color="#000"/></linearGradient>`,
+    `<mask id="milkyway"><rect width="${w}" height="${hy}" fill="url(#mw)"/></mask>`,
     `<filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>`,
     // Clouds: stretched noise (the limb is seen edge-on), kept as soft white wisps.
     `<filter id="clouds" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".0045 .03" numOctaves="4" seed="11"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 .93  0 0 0 0 .85  1.8 0 0 0 -.78"/></filter>`,
