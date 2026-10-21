@@ -2,7 +2,7 @@
 // Bento cards (big gradient figures, illustrated visuals, horizon header) dressed in the "café" style
 // of kaysuto.fr: warm espresso, ivory text, sand accent, Geist for text and Geist Mono for labels,
 // two-tone titles. Text is converted to outlines, so the images look the same everywhere.
-// Fonts in design/fonts are copied from node_modules/geist/dist/fonts: Geist-SemiBold, Geist-Medium, GeistMono-Medium.
+// Fonts come from the geist npm package (node_modules/geist/dist/fonts), so CI builds with a plain npm ci.
 import * as hb from 'harfbuzzjs';
 import { readFileSync, writeFileSync } from 'node:fs';
 import * as si from 'simple-icons';
@@ -25,7 +25,8 @@ const M = GAP / 2; // each image carries half the gutter, so cards line up witho
 const X = M + PAD;
 
 const loadFont = name => {
-  const face = new hb.Face(new hb.Blob(readFileSync(new URL(`./fonts/${name}.ttf`, import.meta.url))));
+  const dir = name.startsWith('GeistMono') ? 'geist-mono' : 'geist-sans';
+  const face = new hb.Face(new hb.Blob(readFileSync(new URL(`./node_modules/geist/dist/fonts/${dir}/${name}.ttf`, import.meta.url))));
   return { hb: new hb.Font(face), upem: face.upem };
 };
 const F = { semi: loadFont('Geist-SemiBold'), medium: loadFont('Geist-Medium'), mono: loadFont('GeistMono-Medium') };
@@ -372,6 +373,51 @@ ${cols}`;
   return card(w, h, body, { defs });
 }
 
+// GitHub activity, refreshed by stats.mjs (data/github.json) every few hours by the stats workflow.
+const GH = JSON.parse(readFileSync(new URL('./data/github.json', import.meta.url), 'utf8'));
+const HEAT = [C.tile, '#4d3a2c', '#7d6046', '#b8916b', '#ecd2b0']; // café ramp, empty to busiest
+const nb = n => n.toLocaleString('fr-FR').replace(/\s/g, ' ');
+
+// Full-width card: four figures, then the last year of contributions as a heatmap.
+function activity() {
+  const w = 1200, h = 534, col = (w - 2 * X) / 4, cell = 16, step = 20, hy = 300;
+  const year = GH.updated.slice(0, 4), [, m, d] = GH.updated.split('-');
+  const figures = [
+    [nb(GH.total), `CONTRIBUTIONS DEPUIS ${GH.since}`, C.text],
+    [`${GH.current} j`, 'SÉRIE EN COURS', 'url(#hot)'],
+    [`${GH.longest} j`, 'MEILLEURE SÉRIE', C.text],
+    [nb(GH.commitsThisYear), `COMMITS EN ${year}`, C.text],
+  ].map(([value, label, fill], i) => `${text(value, { x: X + i * col, y: 238, size: 52, font: F.semi, tracking: -0.03, fill })}
+${mono(label, { x: X + i * col, y: 268, size: 13, tracking: 0.12 })}`).join('\n');
+  // Levels follow the quartiles of the active days, like GitHub's own calendar.
+  const active = GH.weeks.flat().filter(Boolean).sort((a, b) => a - b);
+  const q = [0.25, 0.5, 0.75].map(f => active[Math.floor(f * (active.length - 1))] ?? 0);
+  const level = n => !n ? 0 : n <= q[0] ? 1 : n <= q[1] ? 2 : n <= q[2] ? 3 : 4;
+  const ox = X + (w - 2 * X - (GH.weeks.length * step - (step - cell))) / 2;
+  let last = null;
+  const cells = GH.weeks.map((week, c) => week.map((n, r) => {
+    const x = ox + c * step, y = hy + r * step;
+    if (n) last = [x, y];
+    return `<rect x="${r1(x)}" y="${y}" width="${cell}" height="${cell}" rx="4" fill="${HEAT[level(n)]}"/>`;
+  }).join('')).join('\n');
+  const legend = HEAT.map((c, i) => `<rect x="${w - X - 52 - (HEAT.length - i) * 20}" y="${h - M - PAD - 13}" width="${cell}" height="${cell}" rx="4" fill="${c}"/>`).join('');
+  const defs = `${linear('hot', ['#ffd27a', '#fba541'])}\n${radial('glow', 120, 0, 560, [[0, C.accent, 0.12], [1, C.accent, 0]])}`;
+  const body = `<rect width="${w}" height="${h}" fill="url(#glow)"/>
+${twoTone([['Mon ', C.text], ['activité.', C.accent]], { x: X, y: 120, size: 50, tracking: -0.03 }).svg}
+${mono(`MIS À JOUR LE ${d}.${m}.${year}`, { x: w - X, y: 118, size: 13, tracking: 0.12, anchor: 'end' })}
+${figures}
+${cells}
+${last ? `<rect class="now" x="${r1(last[0] - 3)}" y="${last[1] - 3}" width="${cell + 6}" height="${cell + 6}" rx="6" fill="none" stroke="${C.accent}" stroke-width="1.5"/>` : ''}
+${mono('12 DERNIERS MOIS', { x: X, y: h - M - PAD, size: 13, tracking: 0.12 })}
+${mono('MOINS', { x: w - X - 52 - HEAT.length * 20 - 10, y: h - M - PAD, size: 13, tracking: 0.12, anchor: 'end' })}
+${legend}
+${mono('PLUS', { x: w - X, y: h - M - PAD, size: 13, tracking: 0.12, anchor: 'end' })}`;
+  // The latest active day is outlined and breathes softly.
+  const style = motion(`.now{animation:now 2.4s ease-in-out infinite}
+@keyframes now{50%{opacity:.25}}`);
+  return card(w, h, body, { defs, style });
+}
+
 // À propos, in the style of an iPhone settings list: one coloured icon per row.
 const ABOUT = [
   ['Otaku', 'trop d’animés et de mangas', 'tv', ['#f7a8bb', '#d9607c']],
@@ -415,7 +461,7 @@ ${text(link, { x: X, y: h - M - PAD, size: 20, font: F.medium, fill: color[0] })
 };
 
 const out = new URL('../assets/', import.meta.url);
-const CARDS = { hero, clover, commits, skills, about, jelly, mirum: smallCard('mirum'), nohello: smallCard('nohello'), portfolio: smallCard('portfolio') };
+const CARDS = { hero, clover, commits, activity, skills, about, jelly, mirum: smallCard('mirum'), nohello: smallCard('nohello'), portfolio: smallCard('portfolio') };
 for (const [name, make] of Object.entries(CARDS)) writeFileSync(new URL(`${name}.svg`, out), make());
 
 // Layout guards: titles must stay clear of the visuals, narrow-card copy must fit its card.

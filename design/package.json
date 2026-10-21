@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "stats": "node stats.mjs",
     "build": "node build.mjs"
   },
   "dependencies": {
