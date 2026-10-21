@@ -155,47 +155,91 @@ ${radial('fade', cx, cy, r, [[0, '#fff', 1], [1, '#fff', 0]])}
 // The line under the name: short like Solaire's, the values of the original profile README.
 const TAGLINE = [['Des projets ', C.secondary], ['simples, utiles et solides.', C.text]];
 
-// Header: a warm sunrise over the horizon of a planet, the name and one line.
+// Seeded random, so stars and city lights land in the same place on every build.
+function rng(seed) {
+  return () => {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// Header: sunrise seen from orbit, the sun breaking over the Earth's limb, then the name and one line.
 function hero() {
-  const w = 1200, h = 640, cx = w / 2, hy = 476, R = 1600, bd = backdrop(w, h, cx, 220, 520);
-  const [left, mid, right] = ['#c5a88d', '#fff1dc', '#fba541'];
+  const w = 1200, h = 640, cx = w / 2, hy = 476, R = 1600, sy = hy - 3;
   const planet = extra => `<circle cx="${cx}" cy="${hy + R}" r="${R}"${extra}/>`;
+  const rand = rng(7);
+  // Stars in the sky, fewer and fainter near the sun's glare.
+  const stars = Array.from({ length: 110 }, () => {
+    const x = rand() * w, y = 20 + rand() * (hy - 60), glare = Math.hypot(x - cx, (y - sy) * 1.6) < 360;
+    const o = r1((glare ? 0.12 : 0.25) + rand() * (glare ? 0.15 : 0.5));
+    return `<circle${rand() < 0.15 ? ' class="tw"' : ''} cx="${r1(x)}" cy="${r1(y)}" r="${r1(0.5 + rand() * 0.9)}" fill="#fff6ea" opacity="${o}"/>`;
+  }).join('');
+  // City lights on the night side, away from the sunlit arc.
+  const cities = Array.from({ length: 160 }, () => {
+    const x = 40 + rand() * (w - 80), dx = x - cx, y = hy + R - Math.sqrt(R * R - dx * dx) + 10 + rand() ** 1.6 * 140;
+    if (Math.abs(dx) < 170 + rand() * 120) return '';
+    return `<circle cx="${r1(x)}" cy="${r1(y)}" r="${r1(0.5 + rand() * 0.9)}" fill="#ffc97a" opacity="${r1(0.25 + rand() * 0.55)}"/>`;
+  }).join('');
+  // Lens flare: ghosts along the line from the sun through the frame's centre.
+  const flare = [[0.4, 9, '#ffd59a', 0.18], [0.75, 24, '#9fd8ff', 0.07], [1.0, 5, '#fff1dc', 0.25]]
+    .map(([t, r, c, o]) => `<circle cx="${r1(cx + (cx + 140 - cx) * t)}" cy="${r1(sy + (h / 2 - 120 - sy) * t)}" r="${r}" fill="${c}" opacity="${o}"/>`).join('');
+  const line = twoTone(TAGLINE, { x: cx - 8, y: 372, size: 36, font: F.medium, tracking: -0.015, anchor: 'middle' });
+  const caretX = cx - 8 + line.width / 2 + 9;
+  const defs = [
+    `<clipPath id="earth">${planet('')}</clipPath>`,
+    `<filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>`,
+    // Clouds: stretched noise (the limb is seen edge-on), kept as soft white wisps.
+    `<filter id="clouds" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".0045 .03" numOctaves="4" seed="11"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 .93  0 0 0 0 .85  1.8 0 0 0 -.78"/></filter>`,
+    // Daylight on the planet: only the arc under the sun is lit, fading into the night side.
+    `<radialGradient id="day" cx="${cx}" cy="${hy}" r="560" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 ${hy}) scale(1 .3) translate(0 ${-hy})"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>`,
+    `<mask id="daymask"><rect width="${w}" height="${h}" fill="url(#day)"/></mask>`,
+    `<radialGradient id="ground" cx="${cx}" cy="${hy}" r="620" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 ${hy}) scale(1 .35) translate(0 ${-hy})"><stop offset="0" stop-color="#5a3a24"/><stop offset=".35" stop-color="#241710"/><stop offset="1" stop-color="#0b0705"/></radialGradient>`,
+    // Atmosphere: blue at the edges, warming to gold and white where the sun crosses it.
+    `<linearGradient id="air" x1="0" y1="0" x2="${w}" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5b8fc7" stop-opacity="0"/><stop offset=".2" stop-color="#5b8fc7" stop-opacity=".55"/><stop offset=".4" stop-color="#ffb35c" stop-opacity=".9"/><stop offset=".5" stop-color="#fff4e2"/><stop offset=".6" stop-color="#ffb35c" stop-opacity=".9"/><stop offset=".8" stop-color="#5b8fc7" stop-opacity=".55"/><stop offset="1" stop-color="#5b8fc7" stop-opacity="0"/></linearGradient>`,
+    `<linearGradient id="hot" x1="0" y1="0" x2="${w}" y2="0" gradientUnits="userSpaceOnUse"><stop offset=".08" stop-color="#fff3e3" stop-opacity="0"/><stop offset=".3" stop-color="#fff3e3" stop-opacity=".9"/><stop offset=".5" stop-color="#fffaf2"/><stop offset=".7" stop-color="#ffe0b8" stop-opacity=".9"/><stop offset=".92" stop-color="#ffe0b8" stop-opacity="0"/></linearGradient>`,
+    `<radialGradient id="haze" cx="${cx}" cy="${sy}" r="420" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffcf8a" stop-opacity=".55"/><stop offset=".25" stop-color="#fba541" stop-opacity=".22"/><stop offset=".6" stop-color="#c5a88d" stop-opacity=".06"/><stop offset="1" stop-color="#c5a88d" stop-opacity="0"/></radialGradient>`,
+    `<radialGradient id="corona" cx="${cx}" cy="${sy}" r="70" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset=".18" stop-color="#fffaf0" stop-opacity=".95"/><stop offset=".45" stop-color="#ffd59a" stop-opacity=".35"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>`,
+    linear('title', G.sand, [0, 0, 0, 1]),
+    blur('md', 10), blur('sm', 2.5), blur('lg', 22),
+    // The animated beam is blurred within the horizon band only, so each frame stays cheap.
+    `<filter id="band" filterUnits="userSpaceOnUse" x="0" y="${hy - 60}" width="${w}" height="${h - hy + 60}"><feGaussianBlur stdDeviation="7"/></filter>`,
+  ].join('\n');
   // A beam of light runs along the horizon. A circle's outline starts at its rightmost point and runs
   // clockwise, so the top of the planet sits at 3/4 of the circumference: the dash enters left, leaves right.
   const Cf = 2 * Math.PI * R, top = 0.75 * Cf, from = r1(-(top - 900)), to = r1(-(top + 640));
   const beam = extra => planet(` class="beam" fill="none" stroke="url(#hot)" stroke-linecap="round" stroke-dasharray="260 ${r1(Cf)}" stroke-dashoffset="${from}"${extra}`);
-  const line = twoTone(TAGLINE, { x: cx - 8, y: 372, size: 36, font: F.medium, tracking: -0.015, anchor: 'middle' });
-  const caretX = cx - 8 + line.width / 2 + 9;
-  const defs = [
-    bd.defs,
-    `<radialGradient id="atmo" cx="${cx}" cy="${hy}" r="700" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 ${hy}) scale(1 .42) translate(0 ${-hy})"><stop offset="0" stop-color="${right}" stop-opacity=".42"/><stop offset=".3" stop-color="${left}" stop-opacity=".16"/><stop offset=".7" stop-color="${left}" stop-opacity=".04"/><stop offset="1" stop-color="${left}" stop-opacity="0"/></radialGradient>`,
-    `<linearGradient id="rim" x1="0" y1="0" x2="${w}" y2="0" gradientUnits="userSpaceOnUse"><stop offset=".05" stop-color="${left}" stop-opacity="0"/><stop offset=".3" stop-color="${left}" stop-opacity=".8"/><stop offset=".5" stop-color="${mid}"/><stop offset=".7" stop-color="${right}" stop-opacity=".8"/><stop offset=".95" stop-color="${right}" stop-opacity="0"/></linearGradient>`,
-    `<linearGradient id="hot" x1="0" y1="0" x2="${w}" y2="0" gradientUnits="userSpaceOnUse"><stop offset=".08" stop-color="#fff3e3" stop-opacity="0"/><stop offset=".3" stop-color="#fff3e3" stop-opacity=".9"/><stop offset=".5" stop-color="#fffaf2"/><stop offset=".7" stop-color="#ffe0b8" stop-opacity=".9"/><stop offset=".92" stop-color="#ffe0b8" stop-opacity="0"/></linearGradient>`,
-    linear('title', G.sand, [0, 0, 0, 1]),
-    blur('md', 10), blur('sm', 2.5),
-    // The animated glow is blurred within the horizon band only, so each frame stays cheap.
-    `<filter id="band" filterUnits="userSpaceOnUse" x="0" y="${hy - 60}" width="${w}" height="${h - hy + 60}"><feGaussianBlur stdDeviation="7"/></filter>`,
-  ].join('\n');
-  const body = `${bd.body}
-<rect class="atmo" width="${w}" height="${h}" fill="url(#atmo)"/>
-${planet(' fill="#0f0906"')}
-${planet(' fill="none" stroke="url(#rim)" stroke-width="12" filter="url(#md)"')}
-${planet(' fill="none" stroke="url(#rim)" stroke-width="2"')}
-${beam(' stroke-width="12" opacity=".85" filter="url(#band)"')}
-${beam(' stroke-width="2.5"')}
-<g class="sun"><ellipse cx="${cx}" cy="${hy}" rx="200" ry="1.5" fill="#ffe8c8" opacity=".45" filter="url(#sm)"/>
-<circle cx="${cx}" cy="${hy}" r="16" fill="#fff" opacity=".6" filter="url(#md)"/>
-<circle cx="${cx}" cy="${hy}" r="4" fill="#fff"/></g>
+  const body = `<g class="stars">${stars}</g>
+<rect class="atmo" width="${w}" height="${h}" fill="url(#haze)"/>
+${planet(' fill="url(#ground)"')}
+<g clip-path="url(#earth)"><rect y="${hy - 10}" width="${w}" height="${h - hy + 10}" filter="url(#clouds)" mask="url(#daymask)" opacity=".85"/>${cities}</g>
+${planet(' fill="none" stroke="url(#air)" stroke-width="34" filter="url(#lg)" opacity=".7"')}
+${planet(' fill="none" stroke="url(#air)" stroke-width="9" filter="url(#md)"')}
+${planet(' fill="none" stroke="url(#air)" stroke-width="1.6"')}
+${beam(' stroke-width="12" opacity=".7" filter="url(#band)"')}
+${beam(' stroke-width="2"')}
+<g class="sun">
+<ellipse cx="${cx}" cy="${sy}" rx="430" ry="1.6" fill="#fff4e2" opacity=".6" filter="url(#sm)"/>
+<ellipse cx="${cx}" cy="${sy}" rx="240" ry="7" fill="#ffcf8a" opacity=".25" filter="url(#md)"/>
+<circle cx="${cx}" cy="${sy}" r="70" fill="url(#corona)"/>
+<circle cx="${cx}" cy="${sy}" r="7" fill="#fff"/>
+</g>
+<g class="flare">${flare}</g>
+<rect width="${w}" height="${h}" filter="url(#grain)" opacity=".05"/>
 ${text('Kimiya', { x: cx, y: 300, size: 168, font: F.semi, tracking: -0.045, anchor: 'middle', fill: 'url(#title)' })}
 ${line.svg}
 <rect class="caret" x="${r1(caretX)}" y="344" width="3" height="36" rx="1.5" fill="${C.accent}"/>`;
-  // The glow breathes, the light twinkles, a beam sweeps every 9 s and the caret blinks like the typewriter of kaysuto.fr.
+  // The haze breathes, the sun pulses, a beam sweeps the horizon every 9 s,
+  // a few stars twinkle and the caret blinks like the typewriter of kaysuto.fr.
   const style = motion(`.atmo{animation:pulse 8s ease-in-out infinite}
-.sun{transform-origin:${cx}px ${hy}px;animation:twinkle 4s ease-in-out infinite}
+.sun{transform-origin:${cx}px ${sy}px;animation:twinkle 5s ease-in-out infinite}
+.flare{animation:pulse 8s ease-in-out infinite}
 .beam{animation:beam 9s ease-in-out infinite}
+.tw{animation:pulse 3s ease-in-out infinite}
 .caret{animation:blink 1.1s steps(1) infinite}
-@keyframes pulse{50%{opacity:.7}}
-@keyframes twinkle{50%{opacity:.75;transform:scale(.8)}}
+@keyframes pulse{50%{opacity:.45}}
+@keyframes twinkle{50%{transform:scale(.92)}}
 @keyframes beam{50%,100%{stroke-dashoffset:${to}}}
 @keyframes blink{50%{opacity:0}}`);
   return card(w, h, body, { defs, style });
