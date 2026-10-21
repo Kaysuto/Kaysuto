@@ -165,9 +165,9 @@ function rng(seed) {
   };
 }
 
-// Header: sunrise seen from orbit, the sun breaking over the Earth's limb, then the name and one line.
+// Header: sunrise seen from orbit, the sun rising behind the Earth's limb, then the name and one line.
 function hero() {
-  const w = 1200, h = 640, cx = w / 2, hy = 476, R = 1600, sy = hy - 3;
+  const w = 1200, h = 640, cx = w / 2, hy = 476, R = 1600, sy = hy + 7; // the sun sits just behind the limb, only its top and its glow show
   const planet = extra => `<circle cx="${cx}" cy="${hy + R}" r="${R}"${extra}/>`;
   const rand = rng(7);
   // Stars in the sky, fewer and fainter near the sun's glare.
@@ -212,6 +212,12 @@ function hero() {
   const beam = extra => planet(` class="beam" fill="none" stroke="url(#hot)" stroke-linecap="round" stroke-dasharray="260 ${r1(Cf)}" stroke-dashoffset="${from}"${extra}`);
   const body = `<g class="stars">${stars}</g>
 <rect class="atmo" width="${w}" height="${h}" fill="url(#haze)"/>
+<g class="sun">
+<ellipse cx="${cx}" cy="${sy}" rx="560" ry="2.4" fill="#fff4e2" opacity=".4" filter="url(#sm)"/>
+<ellipse cx="${cx}" cy="${sy}" rx="340" ry="12" fill="#ffcf8a" opacity=".14" filter="url(#md)"/>
+<circle cx="${cx}" cy="${sy}" r="140" fill="url(#corona)"/>
+<circle cx="${cx}" cy="${sy}" r="15" fill="#fff"/>
+</g>
 ${planet(' fill="url(#ground)"')}
 <g clip-path="url(#earth)"><rect y="${hy - 10}" width="${w}" height="${h - hy + 10}" filter="url(#clouds)" mask="url(#daymask)" opacity=".85"/>${cities}</g>
 ${planet(' fill="none" stroke="url(#air)" stroke-width="34" filter="url(#lg)" opacity=".7"')}
@@ -219,12 +225,6 @@ ${planet(' fill="none" stroke="url(#air)" stroke-width="9" filter="url(#md)"')}
 ${planet(' fill="none" stroke="url(#air)" stroke-width="1.6"')}
 ${beam(' stroke-width="12" opacity=".7" filter="url(#band)"')}
 ${beam(' stroke-width="2"')}
-<g class="sun">
-<ellipse cx="${cx}" cy="${sy}" rx="560" ry="2.4" fill="#fff4e2" opacity=".4" filter="url(#sm)"/>
-<ellipse cx="${cx}" cy="${sy}" rx="340" ry="12" fill="#ffcf8a" opacity=".14" filter="url(#md)"/>
-<circle cx="${cx}" cy="${sy}" r="140" fill="url(#corona)"/>
-<circle cx="${cx}" cy="${sy}" r="15" fill="#fff"/>
-</g>
 <g class="flare">${flare}</g>
 <rect width="${w}" height="${h}" filter="url(#grain)" opacity=".05"/>
 ${text('Kimiya', { x: cx, y: 300, size: 168, font: F.semi, tracking: -0.045, anchor: 'middle', fill: 'url(#title)' })}
