@@ -345,7 +345,7 @@ const SKILLS = [
   ['SUPERVISION', [[si.siGrafana, 'Grafana'], [si.siPrometheus, 'Prometheus'], ['shield-ban', 'Fail2Ban'], [si.siCloudflare, 'Cloudflare']]],
   ['JEU & APPS', [[si.siOpenjdk, 'Java · Paper'], [si.siTauri, 'Rust · Tauri'], [si.siDiscorddotjs, 'Discord.js'], [si.siPterodactyl, 'Pterodactyl']]],
 ];
-const SKILLS_SUB = 'Ce que j’utilise au quotidien sur mes projets.';
+const SKILLS_SUB = 'Testés au quotidien sur mes propres projets.';
 
 // Full-width card: one column per domain, each a list of logo tiles.
 function skills() {
