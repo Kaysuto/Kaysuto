@@ -150,8 +150,8 @@ ${radial('fade', cx, cy, r, [[0, '#fff', 1], [1, '#fff', 0]])}
 <rect width="${w}" height="${h}" filter="url(#grain)" opacity=".05"/>`,
 });
 
-// The line under the name, from the original profile README.
-const TAGLINE = [['Je construis des trucs ', C.secondary], ['simples, utiles et faciles à prendre en main.', C.text]];
+// The line under the name: short like Solaire's, the values of the original profile README.
+const TAGLINE = [['Des projets ', C.secondary], ['simples, utiles et solides.', C.text]];
 
 // Header: a warm sunrise over the horizon of a planet, the name and one line.
 function hero() {
@@ -162,7 +162,7 @@ function hero() {
   // clockwise, so the top of the planet sits at 3/4 of the circumference: the dash enters left, leaves right.
   const Cf = 2 * Math.PI * R, top = 0.75 * Cf, from = r1(-(top - 900)), to = r1(-(top + 640));
   const beam = extra => planet(` class="beam" fill="none" stroke="url(#hot)" stroke-linecap="round" stroke-dasharray="260 ${r1(Cf)}" stroke-dashoffset="${from}"${extra}`);
-  const line = twoTone(TAGLINE, { x: cx - 8, y: 372, size: 34, font: F.medium, tracking: -0.015, anchor: 'middle' });
+  const line = twoTone(TAGLINE, { x: cx - 8, y: 372, size: 36, font: F.medium, tracking: -0.015, anchor: 'middle' });
   const caretX = cx - 8 + line.width / 2 + 9;
   const defs = [
     bd.defs,
@@ -238,11 +238,11 @@ function clover() {
   const parts = CLOVER_PARTS.map(([icon, name], i) =>
     cloverTile(col(i), 414 + Math.floor(i / 2) * 70, cw, 52, icon, name, { color: G.sand[1], delay: 3 + i * 0.5 })).join('\n');
   const body = `<rect width="800" height="600" fill="url(#glow)"/>
-${mono('EN JEU · JAVA & BEDROCK', { x: sx, y: 92, size: 14, tracking: 0.1 })}
+${mono('MODES DE JEU', { x: sx, y: 92, size: 14, tracking: 0.1 })}
 ${modes}
 ${mono('AUTOUR DU SERVEUR', { x: sx, y: 396, size: 14, tracking: 0.1 })}
 ${parts}
-${projectCopy({ icon: 'clover', eyebrow: 'CLOVER GAMES', title: ['Serveur', 'Minecraft.'], link: 'play.clovergames.fr ›', linkColor: a, stat: '0 €', caption: 'pour jouer, zéro pay-to-win' })}`;
+${projectCopy({ icon: 'clover', eyebrow: 'CLOVER GAMES', title: ['Serveur', 'Minecraft.'], link: 'play.clovergames.fr ›', linkColor: a, stat: String(MODES.length), caption: 'modes, Java & Bedrock ensemble' })}`;
   // The icon squares pulse softly in turn, like status lights.
   const style = motion(`.pip{animation:pip 3s ease-in-out infinite}
 @keyframes pip{50%{fill-opacity:.3}}`);
@@ -417,7 +417,7 @@ for (const [name, make] of Object.entries(CARDS)) writeFileSync(new URL(`${name}
 let over = 0;
 const fits = (label, right, limit) => { if (right > limit) { over++; console.log(`OVER ${label}: ${Math.round(right)} / ${limit}`); } };
 for (const line of ['Serveur', 'Minecraft.', 'Streaming', 'sans pub.']) fits(line, X + measure(line, { size: 50, font: F.semi, tracking: -0.03 }), 420);
-fits('clover caption', X + measure('pour jouer, zéro pay-to-win', { size: 22 }), 420);
+fits('clover caption', X + measure('modes, Java & Bedrock ensemble', { size: 22 }), 420);
 fits('Mes commits.', X + measure('Mes commits.', { size: 40, font: F.semi, tracking: -0.025 }), 400 - X);
 for (const [label] of COMMITS) fits(label, X + 48 + measure(label, { size: 19, font: F.semi }), 400 - X - 44);
 fits(SKILLS_SUB, X + measure(SKILLS_SUB, { size: 22 }), 1200 - X);
@@ -430,6 +430,6 @@ for (const { title, link, eyebrow } of Object.values(SMALL)) {
 }
 for (const [name] of [...MODES, NEXT_MODE]) fits(name, 58 + measure(name, { size: 18, font: F.semi }), 167 - 12);
 for (const [, name] of CLOVER_PARTS) fits(name, 52 + measure(name, { size: 18, font: F.semi }), 167 - 12);
-fits('hero line', 600 + measure(TAGLINE.map(([t]) => t).join(''), { size: 34, tracking: -0.015 }) / 2 + 14, 1200 - X);
+fits('hero line', 600 + measure(TAGLINE.map(([t]) => t).join(''), { size: 36, tracking: -0.015 }) / 2 + 14, 1200 - X);
 console.log(over ? `${over} overflow(s)` : 'all copy fits');
 if (over) process.exitCode = 1;
