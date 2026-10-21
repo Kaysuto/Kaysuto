@@ -199,8 +199,8 @@ function hero() {
     // Atmosphere: blue at the edges, warming to gold and white where the sun crosses it.
     `<linearGradient id="air" x1="0" y1="0" x2="${w}" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5b8fc7" stop-opacity="0"/><stop offset=".2" stop-color="#5b8fc7" stop-opacity=".55"/><stop offset=".4" stop-color="#ffb35c" stop-opacity=".9"/><stop offset=".5" stop-color="#fff4e2"/><stop offset=".6" stop-color="#ffb35c" stop-opacity=".9"/><stop offset=".8" stop-color="#5b8fc7" stop-opacity=".55"/><stop offset="1" stop-color="#5b8fc7" stop-opacity="0"/></linearGradient>`,
     `<linearGradient id="hot" x1="0" y1="0" x2="${w}" y2="0" gradientUnits="userSpaceOnUse"><stop offset=".08" stop-color="#fff3e3" stop-opacity="0"/><stop offset=".3" stop-color="#fff3e3" stop-opacity=".9"/><stop offset=".5" stop-color="#fffaf2"/><stop offset=".7" stop-color="#ffe0b8" stop-opacity=".9"/><stop offset=".92" stop-color="#ffe0b8" stop-opacity="0"/></linearGradient>`,
-    `<radialGradient id="haze" cx="${cx}" cy="${sy}" r="420" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffcf8a" stop-opacity=".55"/><stop offset=".25" stop-color="#fba541" stop-opacity=".22"/><stop offset=".6" stop-color="#c5a88d" stop-opacity=".06"/><stop offset="1" stop-color="#c5a88d" stop-opacity="0"/></radialGradient>`,
-    `<radialGradient id="corona" cx="${cx}" cy="${sy}" r="70" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset=".18" stop-color="#fffaf0" stop-opacity=".95"/><stop offset=".45" stop-color="#ffd59a" stop-opacity=".35"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>`,
+    `<radialGradient id="haze" cx="${cx}" cy="${sy}" r="560" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffcf8a" stop-opacity=".55"/><stop offset=".25" stop-color="#fba541" stop-opacity=".22"/><stop offset=".6" stop-color="#c5a88d" stop-opacity=".06"/><stop offset="1" stop-color="#c5a88d" stop-opacity="0"/></radialGradient>`,
+    `<radialGradient id="corona" cx="${cx}" cy="${sy}" r="140" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset=".18" stop-color="#fffaf0" stop-opacity=".95"/><stop offset=".45" stop-color="#ffd59a" stop-opacity=".35"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>`,
     linear('title', G.sand, [0, 0, 0, 1]),
     blur('md', 10), blur('sm', 2.5), blur('lg', 22),
     // The animated beam is blurred within the horizon band only, so each frame stays cheap.
@@ -220,10 +220,10 @@ ${planet(' fill="none" stroke="url(#air)" stroke-width="1.6"')}
 ${beam(' stroke-width="12" opacity=".7" filter="url(#band)"')}
 ${beam(' stroke-width="2"')}
 <g class="sun">
-<ellipse cx="${cx}" cy="${sy}" rx="430" ry="1.6" fill="#fff4e2" opacity=".6" filter="url(#sm)"/>
-<ellipse cx="${cx}" cy="${sy}" rx="240" ry="7" fill="#ffcf8a" opacity=".25" filter="url(#md)"/>
-<circle cx="${cx}" cy="${sy}" r="70" fill="url(#corona)"/>
-<circle cx="${cx}" cy="${sy}" r="7" fill="#fff"/>
+<ellipse cx="${cx}" cy="${sy}" rx="560" ry="2.4" fill="#fff4e2" opacity=".6" filter="url(#sm)"/>
+<ellipse cx="${cx}" cy="${sy}" rx="340" ry="12" fill="#ffcf8a" opacity=".25" filter="url(#md)"/>
+<circle cx="${cx}" cy="${sy}" r="140" fill="url(#corona)"/>
+<circle cx="${cx}" cy="${sy}" r="15" fill="#fff"/>
 </g>
 <g class="flare">${flare}</g>
 <rect width="${w}" height="${h}" filter="url(#grain)" opacity=".05"/>

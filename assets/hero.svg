@@ -10,8 +10,8 @@
 <radialGradient id="ground" cx="600" cy="476" r="620" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 476) scale(1 .35) translate(0 -476)"><stop offset="0" stop-color="#5a3a24"/><stop offset=".35" stop-color="#241710"/><stop offset="1" stop-color="#0b0705"/></radialGradient>
 <linearGradient id="air" x1="0" y1="0" x2="1200" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5b8fc7" stop-opacity="0"/><stop offset=".2" stop-color="#5b8fc7" stop-opacity=".55"/><stop offset=".4" stop-color="#ffb35c" stop-opacity=".9"/><stop offset=".5" stop-color="#fff4e2"/><stop offset=".6" stop-color="#ffb35c" stop-opacity=".9"/><stop offset=".8" stop-color="#5b8fc7" stop-opacity=".55"/><stop offset="1" stop-color="#5b8fc7" stop-opacity="0"/></linearGradient>
 <linearGradient id="hot" x1="0" y1="0" x2="1200" y2="0" gradientUnits="userSpaceOnUse"><stop offset=".08" stop-color="#fff3e3" stop-opacity="0"/><stop offset=".3" stop-color="#fff3e3" stop-opacity=".9"/><stop offset=".5" stop-color="#fffaf2"/><stop offset=".7" stop-color="#ffe0b8" stop-opacity=".9"/><stop offset=".92" stop-color="#ffe0b8" stop-opacity="0"/></linearGradient>
-<radialGradient id="haze" cx="600" cy="473" r="420" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffcf8a" stop-opacity=".55"/><stop offset=".25" stop-color="#fba541" stop-opacity=".22"/><stop offset=".6" stop-color="#c5a88d" stop-opacity=".06"/><stop offset="1" stop-color="#c5a88d" stop-opacity="0"/></radialGradient>
-<radialGradient id="corona" cx="600" cy="473" r="70" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset=".18" stop-color="#fffaf0" stop-opacity=".95"/><stop offset=".45" stop-color="#ffd59a" stop-opacity=".35"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>
+<radialGradient id="haze" cx="600" cy="473" r="560" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffcf8a" stop-opacity=".55"/><stop offset=".25" stop-color="#fba541" stop-opacity=".22"/><stop offset=".6" stop-color="#c5a88d" stop-opacity=".06"/><stop offset="1" stop-color="#c5a88d" stop-opacity="0"/></radialGradient>
+<radialGradient id="corona" cx="600" cy="473" r="140" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset=".18" stop-color="#fffaf0" stop-opacity=".95"/><stop offset=".45" stop-color="#ffd59a" stop-opacity=".35"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>
 <linearGradient id="title" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e6d2"/><stop offset="1" stop-color="#c5a88d"/></linearGradient>
 <filter id="md" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="10"/></filter>
 <filter id="sm" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2.5"/></filter>
@@ -41,10 +41,10 @@
 <circle cx="600" cy="2076" r="1600" class="beam" fill="none" stroke="url(#hot)" stroke-linecap="round" stroke-dasharray="260 10053.1" stroke-dashoffset="-6639.8" stroke-width="12" opacity=".7" filter="url(#band)"/>
 <circle cx="600" cy="2076" r="1600" class="beam" fill="none" stroke="url(#hot)" stroke-linecap="round" stroke-dasharray="260 10053.1" stroke-dashoffset="-6639.8" stroke-width="2"/>
 <g class="sun">
-<ellipse cx="600" cy="473" rx="430" ry="1.6" fill="#fff4e2" opacity=".6" filter="url(#sm)"/>
-<ellipse cx="600" cy="473" rx="240" ry="7" fill="#ffcf8a" opacity=".25" filter="url(#md)"/>
-<circle cx="600" cy="473" r="70" fill="url(#corona)"/>
-<circle cx="600" cy="473" r="7" fill="#fff"/>
+<ellipse cx="600" cy="473" rx="560" ry="2.4" fill="#fff4e2" opacity=".6" filter="url(#sm)"/>
+<ellipse cx="600" cy="473" rx="340" ry="12" fill="#ffcf8a" opacity=".25" filter="url(#md)"/>
+<circle cx="600" cy="473" r="140" fill="url(#corona)"/>
+<circle cx="600" cy="473" r="15" fill="#fff"/>
 </g>
 <g class="flare"><circle cx="656" cy="363.8" r="9" fill="#ffd59a" opacity="0.18"/><circle cx="705" cy="268.3" r="24" fill="#9fd8ff" opacity="0.07"/><circle cx="740" cy="200" r="5" fill="#fff1dc" opacity="0.25"/></g>
 <rect width="1200" height="640" filter="url(#grain)" opacity=".05"/>
