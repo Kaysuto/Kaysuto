@@ -101,7 +101,8 @@ const MARKS = {
   // Jelly: 160 × 160 viewBox, ids prefixed so they cannot clash with the card's own.
   jelly: { tile: '#0b1b1f', inner: s => `<g transform="scale(${r1(s / 160 * 1e4) / 1e4})">${svgInner('./logos/jelly.svg').replace(/id="([\w-]+)"/g, 'id="jl-$1"').replace(/url\(#([\w-]+)\)/g, 'url(#jl-$1)')}</g>`, scale: 34 / 44 },
   clover: { tile: '#0f2416', inner: s => `<image width="${s}" height="${s}" href="${png('./logos/clover.png')}" style="image-rendering:pixelated"/>`, scale: 34 / 44 },
-  portfolio: { tile: C.tile, inner: s => `<g transform="scale(${s / 64})">${svgInner('./logos/portfolio.svg')}</g>`, scale: 1 },
+  // kaysuto.fr favicon: 32 × 32 viewBox, transparent, ids prefixed like Jelly's.
+  portfolio: { tile: '#1a110d', inner: s => `<g transform="scale(${r1(s / 32 * 1e4) / 1e4})">${svgInner('./logos/portfolio.svg').replace(/id="([\w-]+)"/g, 'id="pf-$1"').replace(/url\(#([\w-]+)\)/g, 'url(#pf-$1)')}</g>`, scale: 38 / 44 },
   mirum: { tile: '#2a1d05', glyph: ['swords', G.mirum[0]] },
   nohello: { tile: '#0b1a2e', glyph: ['message-circle-off', G.nohello[0]] },
 };
@@ -149,12 +150,9 @@ ${radial('fade', cx, cy, r, [[0, '#fff', 1], [1, '#fff', 0]])}
 <rect width="${w}" height="${h}" filter="url(#grain)" opacity=".05"/>`,
 });
 
-// Figures from kaysuto.fr.
-const STATS = [['24', 'ANS'], ['13', 'ANS DE CODE EN AUTODIDACTE'], ['3', 'ANS EN DATACENTER']];
-
-// Header: a warm sunrise over the horizon of a planet, with the kaysuto.fr greeting and figures.
+// Header: a warm sunrise over the horizon of a planet, the name and one line.
 function hero() {
-  const w = 1200, h = 640, cx = w / 2, hy = 456, R = 1600, bd = backdrop(w, h, cx, 220, 520);
+  const w = 1200, h = 640, cx = w / 2, hy = 476, R = 1600, bd = backdrop(w, h, cx, 220, 520);
   const [left, mid, right] = ['#c5a88d', '#fff1dc', '#fba541'];
   const planet = extra => `<circle cx="${cx}" cy="${hy + R}" r="${R}"${extra}/>`;
   // A beam of light runs along the horizon. A circle's outline starts at its rightmost point and runs
@@ -173,11 +171,6 @@ function hero() {
     // The animated glow is blurred within the horizon band only, so each frame stays cheap.
     `<filter id="band" filterUnits="userSpaceOnUse" x="0" y="${hy - 60}" width="${w}" height="${h - hy + 60}"><feGaussianBlur stdDeviation="7"/></filter>`,
   ].join('\n');
-  const stats = STATS.map(([n, label], i) => {
-    const x = cx + (i - 1) * 330;
-    return `${text(n, { x, y: 552, size: 44, font: F.mono, tracking: -0.02, anchor: 'middle' })}
-${mono(label, { x, y: 586, size: 14, anchor: 'middle' })}`;
-  }).join('\n');
   const body = `${bd.body}
 <rect class="atmo" width="${w}" height="${h}" fill="url(#atmo)"/>
 ${planet(' fill="#0f0906"')}
@@ -188,12 +181,9 @@ ${beam(' stroke-width="2.5"')}
 <g class="sun"><ellipse cx="${cx}" cy="${hy}" rx="200" ry="1.5" fill="#ffe8c8" opacity=".45" filter="url(#sm)"/>
 <circle cx="${cx}" cy="${hy}" r="16" fill="#fff" opacity=".6" filter="url(#md)"/>
 <circle cx="${cx}" cy="${hy}" r="4" fill="#fff"/></g>
-${mono('PRODUCT BUILDER · FRANCE', { x: cx, y: 100, anchor: 'middle' })}
-${text('Salut, je suis', { x: cx, y: 168, size: 36, font: F.medium, tracking: -0.015, anchor: 'middle', fill: C.secondary })}
-${text('Kimiya', { x: cx, y: 300, size: 150, font: F.semi, tracking: -0.045, anchor: 'middle', fill: 'url(#title)' })}
+${text('Kimiya', { x: cx, y: 300, size: 168, font: F.semi, tracking: -0.045, anchor: 'middle', fill: 'url(#title)' })}
 ${line.svg}
-<rect class="caret" x="${r1(caretX)}" y="344" width="3" height="36" rx="1.5" fill="${C.accent}"/>
-${stats}`;
+<rect class="caret" x="${r1(caretX)}" y="344" width="3" height="36" rx="1.5" fill="${C.accent}"/>`;
   // The glow breathes, the light twinkles, a beam sweeps every 9 s and the caret blinks like the typewriter of kaysuto.fr.
   const style = motion(`.atmo{animation:pulse 8s ease-in-out infinite}
 .sun{transform-origin:${cx}px ${hy}px;animation:twinkle 4s ease-in-out infinite}
@@ -218,27 +208,51 @@ function projectCopy({ icon, eyebrow, title, link, linkColor, stat, caption }) {
   ].join('\n');
 }
 
-// The Clover Games game modes (the lobby is not one), plus the in-house launcher.
-const MODES = [['Practice', 'swords'], ['PvPSoup', 'soup'], ['SkyPvP', 'cloudy'], ['Créatif', 'palette'], ['BedWars', 'bed-double']];
-const SERVERS = [...MODES, ['Launcher', 'monitor-down']];
+// Everything built around the server, from the Clover Games repositories and wiki (2026-10-21).
+const CLOVER_PARTS = [
+  ['puzzle', 'Plugin clover-core', '30 MODULES · PAPER 26.3'],
+  ['monitor-down', 'Launcher', 'TAURI 2 · RUST · V0.6.1'],
+  ['globe', 'Site', 'NEXT.JS · BOUTIQUE · VOTE'],
+  ['bot', 'Bot Discord', 'SYNC EN JEU · ANTI-RAID'],
+];
+// The game modes open today (the lobby is not one).
+const MODES = ['Practice', 'PvPSoup', 'SkyPvP', 'BedWars', 'Créatif'];
+const CLOVER_COMMANDS = 123; // commands declared in clover-core's plugin.yml
 
 function clover() {
-  const [a, b] = G.clover, sx = 430, tw = 162, th = 128;
+  const [a, b] = G.clover, sx = 430, pw = 346, ph = 76;
   const defs = [linear('stat', G.clover), radial('glow', 760, 600, 420, [[0, b, 0.18], [1, b, 0]])].join('\n');
-  const tiles = SERVERS.map(([name, icon], i) => {
-    const x = sx + (i % 2) * (tw + 12), y = 72 + Math.floor(i / 2) * (th + 12);
-    return `<rect x="${x}" y="${y}" width="${tw}" height="${th}" rx="18" fill="${C.tile}" fill-opacity=".7"/>
-<rect x="${x + 0.5}" y="${y + 0.5}" width="${tw - 1}" height="${th - 1}" rx="17.5" fill="none" stroke="${C.border}"/>
-<rect class="pip" x="${x + 22}" y="${y + 22}" width="40" height="40" rx="11" fill="${a}" fill-opacity=".14" style="animation-delay:${i * 0.5}s"/>
-${lucide(icon, x + 30, y + 30, 24, a)}
-${text(name, { x: x + 22, y: y + 100, size: 20, font: F.semi })}`;
+  // The ecosystem: one row per piece, like a list of services.
+  const parts = CLOVER_PARTS.map(([icon, name, sub], i) => {
+    const y = 72 + i * (ph + 10);
+    return `<rect x="${sx}" y="${y}" width="${pw}" height="${ph}" rx="18" fill="${C.tile}" fill-opacity=".7"/>
+<rect x="${sx + 0.5}" y="${y + 0.5}" width="${pw - 1}" height="${ph - 1}" rx="17.5" fill="none" stroke="${C.border}"/>
+<rect class="pip" x="${sx + 18}" y="${y + 18}" width="40" height="40" rx="11" fill="${a}" fill-opacity=".14" style="animation-delay:${i * 0.6}s"/>
+${lucide(icon, sx + 26, y + 26, 24, a)}
+${text(name, { x: sx + 72, y: y + 34, size: 19, font: F.semi })}
+${mono(sub, { x: sx + 72, y: y + 57, size: 13, tracking: 0.08 })}`;
+  }).join('\n');
+  // The modes, as pills with a status light, wrapped on two lines.
+  let px = sx, py = 438;
+  const modes = MODES.map((name, i) => {
+    const w = 36 + measure(name, { size: 15, font: F.semi });
+    if (px + w > sx + pw) { px = sx; py += 44; }
+    const svg = `<rect x="${r1(px)}" y="${py}" width="${r1(w)}" height="34" rx="10" fill="${C.tile}" fill-opacity=".7" stroke="${C.border}"/>
+<circle class="led" cx="${r1(px + 16)}" cy="${py + 17}" r="4" fill="${a}" style="animation-delay:${i * 0.4}s"/>
+${text(name, { x: px + 28, y: py + 22.5, size: 15, font: F.semi })}`;
+    px += w + 8;
+    return svg;
   }).join('\n');
   const body = `<rect width="800" height="600" fill="url(#glow)"/>
-${tiles}
-${projectCopy({ icon: 'clover', eyebrow: 'CLOVER GAMES', title: ['Mini-jeux', 'Minecraft.'], link: 'clovergames.fr ›', linkColor: a, stat: String(MODES.length), caption: 'modes de jeu multiplateformes' })}`;
-  // Each mode tile pulses softly in turn, like a status light.
+${parts}
+${mono(`${MODES.length} MODES · JAVA & BEDROCK ENSEMBLE`, { x: sx, y: 424, size: 13, tracking: 0.08 })}
+${modes}
+${projectCopy({ icon: 'clover', eyebrow: 'CLOVER GAMES', title: ['Serveur', 'Minecraft.'], link: 'play.clovergames.fr ›', linkColor: a, stat: String(CLOVER_COMMANDS), caption: 'commandes dans mon plugin' })}`;
+  // The service icons and the mode lights pulse softly in turn, like status lights.
   const style = motion(`.pip{animation:pip 3s ease-in-out infinite}
-@keyframes pip{50%{fill-opacity:.32}}`);
+.led{animation:led 2.4s ease-in-out infinite}
+@keyframes pip{50%{fill-opacity:.32}}
+@keyframes led{50%{opacity:.35}}`);
   return card(800, 600, body, { defs, style });
 }
 
@@ -266,7 +280,7 @@ ${text('1080p', { x: sx + 53, y: sy + 40, size: 13, font: F.semi, anchor: 'middl
 <circle cx="${mid}" cy="${sy + 168}" r="31" fill="#fff" fill-opacity=".92"/>
 <path d="M${mid - 8} ${sy + 153}v30l25-15z" fill="#0b0b0d"/>
 <rect x="${mid - 80}" y="${sy + sh - 116}" width="160" height="30" rx="8" fill="#000" fill-opacity=".55"/>
-${text('Zéro pub. Promis.', { x: mid, y: sy + sh - 96, size: 15, font: F.semi, anchor: 'middle', fill: '#fff' })}
+${text('Toujours là ?', { x: mid, y: sy + sh - 96, size: 15, font: F.semi, anchor: 'middle', fill: '#fff' })}
 ${text('42:17', { x: sx + 24, y: sy + sh - 44, size: 14, font: F.mono, fill: '#fff', extra: ' fill-opacity=".8"' })}
 <rect x="${sx + 24}" y="${sy + sh - 32}" width="${sw}" height="5" rx="2.5" fill="#fff" fill-opacity=".22"/>
 <rect class="p" x="${sx + 24}" y="${sy + sh - 32}" width="150" height="5" rx="2.5" fill="url(#bar)"/>
@@ -409,8 +423,8 @@ for (const [name, make] of Object.entries(CARDS)) writeFileSync(new URL(`${name}
 // Layout guards: titles must stay clear of the visuals, narrow-card copy must fit its card.
 let over = 0;
 const fits = (label, right, limit) => { if (right > limit) { over++; console.log(`OVER ${label}: ${Math.round(right)} / ${limit}`); } };
-for (const line of ['Mini-jeux', 'Minecraft.', 'Streaming', 'sans pub.']) fits(line, X + measure(line, { size: 50, font: F.semi, tracking: -0.03 }), 420);
-fits('clover caption', X + measure('modes de jeu multiplateformes', { size: 22 }), 420);
+for (const line of ['Serveur', 'Minecraft.', 'Streaming', 'sans pub.']) fits(line, X + measure(line, { size: 50, font: F.semi, tracking: -0.03 }), 420);
+fits('clover caption', X + measure('commandes dans mon plugin', { size: 22 }), 420);
 fits('Mes commits.', X + measure('Mes commits.', { size: 40, font: F.semi, tracking: -0.025 }), 400 - X);
 for (const [label] of COMMITS) fits(label, X + 48 + measure(label, { size: 19, font: F.semi }), 400 - X - 44);
 fits(SKILLS_SUB, X + measure(SKILLS_SUB, { size: 22 }), 1200 - X);
@@ -421,7 +435,8 @@ for (const { title, link, eyebrow } of Object.values(SMALL)) {
   fits(link, X + measure(link, { size: 20 }), 400 - X);
   fits(eyebrow, X + 60 + measure(eyebrow, { size: 15, font: F.mono, tracking: 0.14 }), 400 - X);
 }
-for (const [name] of SERVERS) fits(name, 430 + 22 + measure(name, { size: 20, font: F.semi }), 430 + 162 - 16);
+for (const [, name, sub] of CLOVER_PARTS) fits(name, 430 + 72 + measure(name, { size: 19, font: F.semi }), 776 - 16), fits(sub, 430 + 72 + measure(sub, { size: 13, font: F.mono, tracking: 0.08 }), 776 - 16);
+fits('clover modes label', 430 + measure(`${MODES.length} MODES · JAVA & BEDROCK ENSEMBLE`, { size: 13, font: F.mono, tracking: 0.08 }), 776);
 fits('hero line', 600 + measure('Passionné par le code & les pixels', { size: 36 }) / 2 + 14, 1200 - X);
 console.log(over ? `${over} overflow(s)` : 'all copy fits');
 if (over) process.exitCode = 1;

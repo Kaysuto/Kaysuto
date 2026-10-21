@@ -1,1 +1,74 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><image width="64" height="64" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAD/UlEQVR42u2b30sUURTH139AndHZWXN31h9rq4m464/I1DQNKimi7CcIkVZr0EJlPUSUlT3kiy/10FtESaCEEklY5IZJJoalpu6ulJlBav5I16x8uc25q6vDrLqyYePcWTgOOnev93zuufecnb1flWr5VwAXFpqsY6nrOoay6dSUnVNTUxxLI0kZPyZ+bD14jCx1jR9zksrPV4CWpQ5yLOWQnLM+GkyWTkPvB19W5LmOCYzmibasVcdFIFiqmWODIn10nsrgyQ3Jxfn5JUKPcGxIzpLO69mQrTqWnpGd854lQf/RaoKzvDoPIcIx9LBcnV8YCVqGMYh3ehmt+eVMy9KvBRsjv0kcIsV5jzF0/vzsr+FU50eK7HHPviYkhbjZnzV9aKAZwr+MVAC871ch79uIBaCmXvDpj3ISDMAOAFykAgDfVeQ67zYFgAJAAaAAUAAoAJaxHTmZyNnVjn65xtDM9ITAers7RNb/0Y5+T4172twsu+zpK0a/Dr151YB+jAyK+gIb6HOgEmuxNCNgo2mDaMCLtTXFGdCjh/dxm7aWJtF9g06Dut63CvqyFhdJfwn4CgB/2tKEoLraahwN5rgY0f3GhnpBXwf27JQXgLlI+D444HV2iQAAVnrxPKp6cJdcALDeLccKyAWwmCkA5Azg7OmTOAsQC2DgsxPlbcsiE4DVUiiqAGULoP1ts8CgZP45MYLvNdmekRkBxshwdOd2BZqeHEXx0Ry5WeD508eosOAwuQASYiJQYmz0qgGIjslERvMJFGXIIK8OMJqKUEp+B2+d+Go0FUoLADiXvTnVbwCxkVp0q6Jc9Pek3bZZ591m3mWTDgAoiOCz//bsdL8BXLpwBlVX3vMC4KUAAPwuGQDHjx5Bw9++iCrDlQKA98MTpxLrKXFkJFkEAGLNFmkAiApXI0dnG3pSW+X3HmApLMDtstJSvG+C63NQbLIVGfirZDbBivIbuB2Erj8A4Fmi88M79LW/9/+lwdTEOBGAtOQE7wPmwnApPNcuN2PTss8EYal46ys53ojq62pwm5qqytUHkJe7BdP39lR4YnQQh7h9gUE5PDk25GnT5+wSzGRrc6Pg/py5xodFfX1ydAn+7zmrRfleQAGgAFAAKAAUAP8KAH9WbpLgc4ITKhKPyQqOy/I/Gog+KIkFRqTuAWr6igrUVaQCiGCCE/FxeSyFIy/8u+cFE7y0jLij8mp6r0Ay45aWkZL+6CaRllDPBkWQIpoCXaRX5RhIykBaJmfZnC40OHNJ7SDHUOlyFU6CLtIn9ShoCEFaJqc1D0t8xeJpkJZBubiWUx3vwz5/VeQqUFeBwAhKRzcQKapMKBeWz/Nj5MO9VM8EmXxx7i8uB0Ql1Ab1WAAAAABJRU5ErkJggg=="/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" height="32" width="32">
+  <defs>
+    <!-- Gradient pour la lettre K -->
+    <linearGradient id="letterK" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF"/>
+      <stop offset="30%" style="stop-color:#FEF7F2"/>
+      <stop offset="70%" style="stop-color:#F0E8E2"/>
+      <stop offset="100%" style="stop-color:#D8CCC4"/>
+    </linearGradient>
+    
+    <!-- Gradient pour les accents -->
+    <radialGradient id="accentGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFC27A" stop-opacity="0.9"/>
+      <stop offset="70%" style="stop-color:#FBA541" stop-opacity="0.6"/>
+      <stop offset="100%" style="stop-color:#C97A12" stop-opacity="0.3"/>
+    </radialGradient>
+    
+    <!-- Filtre pour la lueur subtile -->
+    <filter id="subtleGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="0.5" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Filtre pour l'ombre de la lettre -->
+    <filter id="letterShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  
+  <!-- Motif subtil de fond (sans rectangle de fond) -->
+  <g opacity="0.1">
+    <path d="M4,16 Q16,12 28,16" stroke="#D8CCC4" stroke-width="0.5" fill="none"/>
+    <path d="M4,20 Q16,16 28,20" stroke="#B4A79F" stroke-width="0.5" fill="none"/>
+  </g>
+  
+  <!-- Particules décoratives -->
+  <g filter="url(#subtleGlow)">
+    <!-- Particule principale (coin supérieur droit) -->
+    <circle cx="25" cy="7" r="1.2" fill="url(#accentGradient)"/>
+    
+    <!-- Particules secondaires -->
+    <circle cx="7" cy="25" r="0.8" fill="url(#accentGradient)"/>
+    <circle cx="24" cy="24" r="0.6" fill="url(#accentGradient)"/>
+    
+    <!-- Micro-particules -->
+    <circle cx="6" cy="8" r="0.4" fill="url(#accentGradient)"/>
+    <circle cx="8" cy="6" r="0.3" fill="url(#accentGradient)"/>
+  </g>
+  
+  <!-- Lettre K principale -->
+  <text x="16" y="23" text-anchor="middle" 
+        font-family="Inter, system-ui, sans-serif" 
+        font-size="18" 
+        font-weight="800" 
+        fill="url(#letterK)"
+        filter="url(#letterShadow)">
+    K
+  </text>
+  
+  <!-- Accents dans les coins -->
+  <g opacity="0.4">
+    <!-- Coin supérieur gauche -->
+    <path d="M4,4 L7,4 M4,4 L4,7" stroke="#D8CCC4" stroke-width="0.8" stroke-linecap="round"/>
+    
+    <!-- Coin inférieur droit -->
+    <path d="M28,26 L25,26 M28,26 L28,23" stroke="#D8CCC4" stroke-width="0.8" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Point lumineux central subtil -->
+  <circle cx="16" cy="16" r="0.5" fill="#FEF7F2" opacity="0.3"/>
+</svg>
