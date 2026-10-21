@@ -70,7 +70,7 @@ function twoTone(parts, { x, y, size, font = F.semi, tracking = -0.025, anchor =
   };
 }
 
-const mono = (str, opts) => text(str, { size: 15, font: F.mono, tracking: 0.14, fill: C.tertiary, ...opts });
+const mono = (str, opts) => text(str, { size: 17, font: F.mono, tracking: 0.14, fill: C.tertiary, ...opts });
 const linear = (id, stops, [x1, y1, x2, y2] = [0, 0, 1, 0]) =>
   `<linearGradient id="${id}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${stops.map((c, i) =>
     `<stop offset="${i / (stops.length - 1)}" stop-color="${c}"/>`).join('')}</linearGradient>`;
@@ -198,7 +198,9 @@ function hero() {
   const cities = Array.from({ length: 160 }, () => {
     const x = 40 + rand() * (w - 80), dx = x - cx, y = hy + R - Math.sqrt(R * R - dx * dx) + 10 + rand() ** 1.6 * 140;
     if (Math.abs(dx) < 170 + rand() * 120) return '';
-    return `<circle cx="${r1(x)}" cy="${r1(y)}" r="${r1(0.5 + rand() * 0.9)}" fill="#ffc97a" opacity="${r1(0.25 + rand() * 0.55)}"/>`;
+    // A quarter of the cities flicker, each at its own pace, as the lights below the night side come and go.
+    const flicker = rand() < 0.25 ? ` class="city" style="animation-duration:${r1(2 + rand() * 4)}s;animation-delay:-${r1(rand() * 6)}s"` : '';
+    return `<circle${flicker} cx="${r1(x)}" cy="${r1(y)}" r="${r1(0.5 + rand() * 0.9)}" fill="#ffc97a" opacity="${r1(0.25 + rand() * 0.55)}"/>`;
   }).join('');
   // Lens flare: ghosts along the line from the sun through the frame's centre.
   const flare = [[0.4, 9, '#ffd59a', 0.18], [0.75, 24, '#9fd8ff', 0.07], [1.0, 5, '#fff1dc', 0.25]]
@@ -259,6 +261,7 @@ ${line.svg}
 .flare{animation:pulse 8s ease-in-out infinite}
 .beam{animation:beam 9s ease-in-out infinite}
 .tw{animation:pulse 3s ease-in-out infinite}
+.city{animation:pulse 4s ease-in-out infinite}
 .caret{animation:blink 1.1s steps(1) infinite}
 @keyframes pulse{50%{opacity:.45}}
 @keyframes twinkle{50%{transform:scale(.92)}}
@@ -306,9 +309,9 @@ function clover() {
   const parts = CLOVER_PARTS.map(([icon, name], i) =>
     cloverTile(col(i), 414 + Math.floor(i / 2) * 70, cw, 52, icon, name, { color: G.sand[1], delay: 3 + i * 0.5 })).join('\n');
   const body = `<rect width="800" height="600" fill="url(#glow)"/>
-${mono('MODES DE JEU', { x: sx, y: 92, size: 14, tracking: 0.1 })}
+${mono('MODES DE JEU', { x: sx, y: 92, size: 16, tracking: 0.1 })}
 ${modes}
-${mono('AUTOUR DU SERVEUR', { x: sx, y: 396, size: 14, tracking: 0.1 })}
+${mono('AUTOUR DU SERVEUR', { x: sx, y: 396, size: 16, tracking: 0.1 })}
 ${parts}
 ${projectCopy({ icon: 'clover', eyebrow: 'CLOVER GAMES', title: ['Serveur', 'Minecraft.'], link: 'play.clovergames.fr ›', linkColor: a, stat: String(MODES.length), caption: 'modes, Java & Bedrock' })}`;
   // The icon squares pulse softly in turn, like status lights.
@@ -394,7 +397,7 @@ ${text(label, { x: X + 48, y: base, size: 19, font: F.semi })}
 ${text(String(count), { x: 400 - X, y: base, size: 18, font: F.mono, anchor: 'end', fill: C.secondary })}`;
   }).join('\n');
   const body = `${twoTone([['Mes ', C.text], ['commits.', C.accent]], { x: X, y: 114, size: 40 }).svg}
-${mono(`${total.toLocaleString('fr-FR').replace(/\s/g, ' ')} SUR GITHUB`, { x: X, y: 150, size: 14 })}
+${mono(`${total.toLocaleString('fr-FR').replace(/\s/g, ' ')} SUR GITHUB`, { x: X, y: 150, size: 16 })}
 <g clip-path="url(#bar)">${bar}<rect class="shine" x="${X - 90}" y="${by}" width="60" height="12" fill="url(#shine)"/></g>
 ${rows}`;
   // A soft highlight sweeps across the bar every 6 s, starting outside it.
@@ -449,12 +452,12 @@ function activity() {
   const w = 1200, h = 534, col = (w - 2 * X) / 4, cell = 16, step = 20, hy = 300;
   const year = GH.updated.slice(0, 4), [, m, d] = GH.updated.split('-');
   const figures = [
-    [nb(GH.total), `CONTRIBUTIONS DEPUIS ${GH.since}`, C.text],
+    [nb(GH.total), 'CONTRIBUTIONS', C.text],
     [`${GH.current} j`, 'SÉRIE EN COURS', 'url(#hot)'],
     [`${GH.longest} j`, 'MEILLEURE SÉRIE', C.text],
     [nb(GH.commitsThisYear), `COMMITS EN ${year}`, C.text],
   ].map(([value, label, fill], i) => `${text(value, { x: X + i * col, y: 238, size: 52, font: F.semi, tracking: -0.03, fill })}
-${mono(label, { x: X + i * col, y: 268, size: 13, tracking: 0.12 })}`).join('\n');
+${mono(label, { x: X + i * col, y: 270, size: 16, tracking: 0.12 })}`).join('\n');
   // Levels follow the quartiles of the active days, like GitHub's own calendar.
   const active = GH.weeks.flat().filter(Boolean).sort((a, b) => a - b);
   const q = [0.25, 0.5, 0.75].map(f => active[Math.floor(f * (active.length - 1))] ?? 0);
@@ -470,14 +473,14 @@ ${mono(label, { x: X + i * col, y: 268, size: 13, tracking: 0.12 })}`).join('\n'
   const defs = `${linear('hot', ['#ffd27a', '#fba541'])}\n${radial('glow', 120, 0, 560, [[0, C.accent, 0.07], [1, C.accent, 0]])}`;
   const body = `<rect width="${w}" height="${h}" fill="url(#glow)"/>
 ${twoTone([['Mon ', C.text], ['activité.', C.accent]], { x: X, y: 120, size: 50, tracking: -0.03 }).svg}
-${mono(`MIS À JOUR LE ${d}.${m}.${year}`, { x: w - X, y: 118, size: 13, tracking: 0.12, anchor: 'end' })}
+${mono(`MIS À JOUR LE ${d}.${m}.${year}`, { x: w - X, y: 118, size: 15, tracking: 0.12, anchor: 'end' })}
 ${figures}
 ${cells}
 ${last ? `<rect class="now" x="${r1(last[0] - 3)}" y="${last[1] - 3}" width="${cell + 6}" height="${cell + 6}" rx="6" fill="none" stroke="${C.accent}" stroke-width="1.5"/>` : ''}
-${mono('12 DERNIERS MOIS', { x: X, y: h - M - PAD, size: 13, tracking: 0.12 })}
-${mono('MOINS', { x: w - X - 52 - HEAT.length * 20 - 10, y: h - M - PAD, size: 13, tracking: 0.12, anchor: 'end' })}
+${mono('12 DERNIERS MOIS', { x: X, y: h - M - PAD, size: 15, tracking: 0.12 })}
+${mono('MOINS', { x: w - X - 52 - HEAT.length * 20 - 10, y: h - M - PAD, size: 15, tracking: 0.12, anchor: 'end' })}
 ${legend}
-${mono('PLUS', { x: w - X, y: h - M - PAD, size: 13, tracking: 0.12, anchor: 'end' })}`;
+${mono('PLUS', { x: w - X, y: h - M - PAD, size: 15, tracking: 0.12, anchor: 'end' })}`;
   // The latest active day is outlined and breathes softly.
   const style = motion(`.now{animation:now 2.4s ease-in-out infinite}
 @keyframes now{50%{opacity:.25}}`);
@@ -504,26 +507,65 @@ ${text(sub, { x: X + 54, y: base, size: 15, font: F.medium, fill: C.secondary })
   }).join('\n');
   const body = `${twoTone([['À ', C.text], ['propos.', C.accent]], { x: X, y: 114, size: 40 }).svg}
 ${text('24 ans, je fabrique des trucs.', { x: X, y: 150, size: 17, font: F.medium, fill: C.secondary })}
-${mono('ANILIST ›', { x: X, y: 188, size: 14, fill: '#f7a8bb' })}
+${mono('ANILIST ›', { x: X, y: 188, size: 16, fill: '#f7a8bb' })}
 ${rows}`;
   return card(400, 600, body, { defs });
 }
 
-// Small project cards: icon, mono eyebrow, two-tone title, link on the bottom baseline.
+// Small scenes at the top of the small cards (the banner spans 12..388 × 12..180).
+const SCENES = {
+  // Mirum Orbis: a treasure map, a dotted trail walking from the compass to the X.
+  mirum: ([a, b]) => `<circle cx="96" cy="72" r="22" fill="none" stroke="${b}" stroke-opacity=".5" stroke-width="1.5"/>
+<path d="M96 54l5 18-5 18-5-18z" fill="${a}" opacity=".9"/>
+<path d="M150 86l22-34 22 34M182 86l18-26 18 26" fill="none" stroke="${b}" stroke-opacity=".45" stroke-width="2" stroke-linejoin="round"/>
+<path class="trail" d="M96 112C140 160 190 92 236 130S300 160 316 96" fill="none" stroke="${a}" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 10"/>
+<path d="M306 82l20 20M326 82l-20 20" stroke="${a}" stroke-width="4" stroke-linecap="round"/>`,
+  // NoHello: the useless "Salut !" crossed out, then the question that should have come first.
+  nohello: ([a]) => `<rect x="44" y="44" width="122" height="40" rx="12" fill="${C.tile}" stroke="${C.border}"/>
+${text('Salut !', { x: 62, y: 70, size: 17, font: F.semi, fill: C.tertiary })}
+<rect x="58" y="63" width="${r1(8 + measure('Salut !', { size: 17, font: F.semi }))}" height="2" rx="1" fill="${C.tertiary}"/>
+<rect x="128" y="100" width="${r1(32 + measure('Comment on déploie ?', { size: 16, font: F.semi }))}" height="42" rx="12" fill="#14304f" stroke="${a}" stroke-opacity=".5"/>
+${text('Comment on déploie ?', { x: 144, y: 127, size: 16, font: F.semi, fill: '#eaf3ff' })}
+${[0, 1, 2].map(i => `<circle class="dot" cx="${62 + i * 12}" cy="122" r="4" fill="${a}" style="animation-delay:${i * 0.2}s"/>`).join('')}`,
+  // Portfolio: a browser window on kaysuto.fr, the name and two project tiles.
+  portfolio: ([a, b]) => `<rect x="56" y="34" width="288" height="170" rx="10" fill="${C.tile}" stroke="${C.border}"/>
+${[0, 1, 2].map(i => `<circle cx="${74 + i * 12}" cy="50" r="4" fill="${C.border}"/>`).join('')}
+<rect x="118" y="41" width="164" height="18" rx="9" fill="${C.card[1]}"/>
+${text('kaysuto.fr', { x: 200, y: 54, size: 12, font: F.mono, anchor: 'middle', fill: C.tertiary })}
+${text('Kimiya', { x: 76, y: 96, size: 22, font: F.semi, tracking: -0.02, fill: a })}
+<rect x="76" y="106" width="150" height="6" rx="3" fill="${C.border}"/>
+<rect x="76" y="118" width="110" height="6" rx="3" fill="${C.border}"/>
+<rect x="76" y="136" width="120" height="44" rx="8" fill="${b}" fill-opacity=".22"/>
+<rect x="204" y="136" width="120" height="44" rx="8" fill="${b}" fill-opacity=".12"/>
+${lucide('mouse-pointer-2', 286, 92, 22, a)}`,
+};
+
+// Small project cards: a small scene, then icon, mono eyebrow, two-tone title and link on the bottom baseline.
 const SMALL = {
   mirum: { eyebrow: 'MIRUM ORBIS', title: ['MMORPG 2D,', 'l’univers d’Ereda.'], link: 'mirum-orbis.com ›', color: G.mirum },
   nohello: { eyebrow: 'NOHELLO', title: ['L’étiquette du', 'chat productif.'], link: 'Kaysuto/no-hello ›', color: G.nohello },
   portfolio: { eyebrow: 'PORTFOLIO', title: ['Mes réalisations', 'et contact pro.'], link: 'kaysuto.fr ›', color: G.portfolio },
 };
 const smallCard = name => () => {
-  const { eyebrow, title, link, color } = SMALL[name], h = 360;
-  const defs = radial('glow', 360, h, 300, [[0, color[1], 0.16], [1, color[1], 0]]);
+  const { eyebrow, title, link, color } = SMALL[name], h = 440, bh = 180;
+  const defs = [
+    radial('glow', 360, h, 300, [[0, color[1], 0.14], [1, color[1], 0]]),
+    radial('sceneglow', 200, 100, 220, [[0, color[1], 0.12], [1, color[1], 0]]),
+    `<clipPath id="scene"><rect x="${M}" y="${M}" width="${400 - 2 * M}" height="${bh - M}"/></clipPath>`,
+  ].join('\n');
   const body = `<rect width="400" height="${h}" fill="url(#glow)"/>
-${appIcon(name, X, 64)}
-${mono(eyebrow, { x: X + 60, y: 92 })}
-${title.map((line, i) => text(line, { x: X, y: 180 + i * 40, size: 32, font: F.semi, tracking: -0.025, fill: i === title.length - 1 ? C.accent : C.text })).join('\n')}
-${text(link, { x: X, y: h - M - PAD, size: 20, font: F.medium, fill: color[0] })}`;
-  return card(400, h, body, { defs });
+<g clip-path="url(#scene)"><rect width="400" height="${bh}" fill="url(#sceneglow)"/>${SCENES[name](color)}</g>
+<rect x="${M}" y="${bh}" width="${400 - 2 * M}" height="1" fill="${C.border}"/>
+${appIcon(name, X, 204)}
+${mono(eyebrow, { x: X + 60, y: 232 })}
+${title.map((line, i) => text(line, { x: X, y: 300 + i * 40, size: 34, font: F.semi, tracking: -0.025, fill: i === title.length - 1 ? C.accent : C.text })).join('\n')}
+${text(link, { x: X, y: h - M - PAD, size: 22, font: F.medium, fill: color[0] })}`;
+  // Mirum's trail walks towards the X; NoHello's typing dots bounce.
+  const style = motion(`.trail{animation:trail 3s linear infinite}
+.dot{animation:dot 1.2s ease-in-out infinite}
+@keyframes trail{to{stroke-dashoffset:-22}}
+@keyframes dot{30%{transform:translateY(-4px)}60%{transform:translateY(0)}}`);
+  return card(400, h, body, { defs, style });
 };
 
 const out = new URL('../assets/', import.meta.url);
@@ -541,14 +583,14 @@ for (const [label] of COMMITS) fits(label, X + 48 + measure(label, { size: 19, f
 fits(SKILLS_SUB, X + measure(SKILLS_SUB, { size: 22 }), 1200 - X);
 for (const [eyebrow, tools] of SKILLS) {
   const col = (1200 - 2 * X) / SKILLS.length;
-  fits(eyebrow, measure(eyebrow, { size: 15, font: F.mono, tracking: 0.14 }), col - 16);
+  fits(eyebrow, measure(eyebrow, { size: 17, font: F.mono, tracking: 0.14 }), col - 16);
   for (const [, label] of tools) fits(label, 64 + measure(label, { size: 19, font: F.semi }), col - 16);
 }
 for (const [label, sub] of ABOUT) fits(sub, X + 54 + measure(sub, { size: 15 }), 400 - X), fits(label, X + 54 + measure(label, { size: 19, font: F.semi }), 400 - X);
 for (const { title, link, eyebrow } of Object.values(SMALL)) {
-  for (const line of title) fits(line, X + measure(line, { size: 32, font: F.semi, tracking: -0.025 }), 400 - X);
-  fits(link, X + measure(link, { size: 20 }), 400 - X);
-  fits(eyebrow, X + 60 + measure(eyebrow, { size: 15, font: F.mono, tracking: 0.14 }), 400 - X);
+  for (const line of title) fits(line, X + measure(line, { size: 34, font: F.semi, tracking: -0.025 }), 400 - X);
+  fits(link, X + measure(link, { size: 22 }), 400 - X);
+  fits(eyebrow, X + 60 + measure(eyebrow, { size: 17, font: F.mono, tracking: 0.14 }), 400 - X);
 }
 for (const [name] of [...MODES, NEXT_MODE]) fits(name, 58 + measure(name, { size: 18, font: F.semi }), 167 - 12);
 for (const [, name] of CLOVER_PARTS) fits(name, 52 + measure(name, { size: 18, font: F.semi }), 167 - 12);

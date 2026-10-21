@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-<a href="https://discord.com/users/418585879435673610"><img src="https://lanyard.cnrad.dev/api/418585879435673610" alt="Ma présence Discord en direct"></a>
+<a href="https://discord.com/users/418585879435673610"><img src="https://lanyard.cnrad.dev/api/418585879435673610?theme=dark&bg=0a0604&borderRadius=12px&idleMessage=Pas%20en%20ligne%20pour%20le%20moment" alt="Ma présence Discord en direct"></a>
 </p>
 
 <p align="center"><sub>Merci pour ta visite !</sub></p>
