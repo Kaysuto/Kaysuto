@@ -483,5 +483,30 @@
       5,
       0
     ]
-  ]
+  ],
+  "repoCommits": {
+    "Kaysuto/playjelly": 748,
+    "Kaysuto/mirum-orbis": 464,
+    "theclovergames/clovergames": 234,
+    "theclovergames/clover-launcher": 35,
+    "theclovergames/clover-bot": 37,
+    "theclovergames/wiki": 58,
+    "theclovergames/guide": 10,
+    "Kaysuto/Kaysuto": 83,
+    "Kaysuto/no-hello": 35,
+    "Kaysuto/pelican-installation-fr": 83,
+    "Kaysuto/pterodactyl-installation-fr": 21,
+    "Kaysuto/rdp-windows11": 27,
+    "Kaysuto/rename-mkv-track": 5,
+    "Kaysuto/snake-profile": 1,
+    "Kaysuto/spotify-discord-status": 5,
+    "Kaysuto/portfolio": 162
+  },
+  "commits": {
+    "Jelly": 748,
+    "Mirum Orbis": 464,
+    "Clover Games": 374,
+    "Guides & outils": 260,
+    "Portfolio": 162
+  }
 }

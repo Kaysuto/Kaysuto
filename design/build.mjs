@@ -20,6 +20,8 @@ const G = {
   nohello: ['#9cc9ff', '#4f8fea'],
   portfolio: ['#f6e6d2', '#fba541'],
 };
+// GitHub figures, refreshed by stats.mjs every few hours by the stats workflow.
+const GH = JSON.parse(readFileSync(new URL('./data/github.json', import.meta.url), 'utf8'));
 const GAP = 24, RADIUS = 17, PAD = 52; // shadcn/ui Mira, as on kaysuto.fr: cards rounded-lg (12 px), inner pieces rounded-md (8 px); 1 unit ≈ 0.7 px on GitHub
 const M = GAP / 2; // each image carries half the gutter, so cards line up without CSS
 const X = M + PAD;
@@ -353,7 +355,7 @@ ${text('42:17', { x: sx + 24, y: sy + sh - 44, size: 14, font: F.mono, fill: '#f
 <rect x="${sx + 0.5}" y="${sy + 0.5}" width="${sw - 1}" height="${sh - 1}" rx="11.5" fill="none" stroke="#fff" stroke-opacity=".14"/>`;
   const body = `<rect width="800" height="600" fill="url(#glow)"/>
 ${screen}
-${projectCopy({ icon: 'jelly', eyebrow: 'JELLY · BETA', title: ['Streaming', 'sans pub.'], link: 'beta.playjelly.fr ›', linkColor: a, stat: '748+', caption: 'commits sur Jelly' })}`;
+${projectCopy({ icon: 'jelly', eyebrow: 'JELLY · BETA', title: ['Streaming', 'sans pub.'], link: 'beta.playjelly.fr ›', linkColor: a, stat: `${GH.commits.Jelly}+`, caption: 'commits sur Jelly' })}`;
   // Slow zoom on the film still; playback keeps going: the fill (150 wide) grows 1.8× in a minute and the knob follows.
   const style = motion(`.kb{transform-origin:${sx + sw / 2}px ${sy + sh / 2}px;animation:kb 24s ease-in-out infinite alternate}
 .p{transform-origin:${sx + 24}px 0;animation:play 60s linear infinite}
@@ -364,14 +366,14 @@ ${projectCopy({ icon: 'jelly', eyebrow: 'JELLY · BETA', title: ['Streaming', 's
   return card(800, 600, body, { defs, style });
 }
 
-// Commits authored on GitHub, by project (2026-10-21; the BySolaire/playjelly mirror is not counted twice).
+// Commits authored on GitHub, by project, refreshed by stats.mjs (data/github.json).
 const COMMITS = [
-  ['Jelly', 748, 'play', G.jelly],
-  ['Mirum Orbis', 464, 'swords', G.mirum],
-  ['Clover Games', 374, 'clover', G.clover],
-  ['Guides & outils', 260, 'book-open-text', G.sand],
-  ['Portfolio', 162, 'user-round', G.portfolio],
-];
+  ['Jelly', 'play', G.jelly],
+  ['Mirum Orbis', 'swords', G.mirum],
+  ['Clover Games', 'clover', G.clover],
+  ['Guides & outils', 'book-open-text', G.sand],
+  ['Portfolio', 'user-round', G.portfolio],
+].map(([name, icon, colors]) => [name, GH.commits[name], icon, colors]).sort((a, b) => b[1] - a[1]);
 
 // Breakdown in the style of iPhone storage: one segmented bar, then one row per project.
 function commits() {
@@ -442,8 +444,7 @@ ${cols}`;
   return card(w, h, body, { defs });
 }
 
-// GitHub activity, refreshed by stats.mjs (data/github.json) every few hours by the stats workflow.
-const GH = JSON.parse(readFileSync(new URL('./data/github.json', import.meta.url), 'utf8'));
+// GitHub activity (GH, loaded at the top).
 const HEAT = [C.tile, '#4d3a2c', '#7d6046', '#b8916b', '#ecd2b0']; // café ramp, empty to busiest
 const nb = n => n.toLocaleString('fr-FR').replace(/\s/g, ' ');
 
@@ -576,7 +577,7 @@ for (const [name, make] of Object.entries(CARDS)) writeFileSync(new URL(`${name}
 let over = 0;
 const fits = (label, right, limit) => { if (right > limit) { over++; console.log(`OVER ${label}: ${Math.round(right)} / ${limit}`); } };
 for (const line of ['Serveur', 'Minecraft.', 'Streaming', 'sans pub.']) fits(line, X + measure(line, { size: 50, font: F.semi, tracking: -0.03 }), 420);
-fits('748+', X - 5 + measure('748+', { size: 168, font: F.semi, tracking: -0.05 }), 460);
+fits('jelly stat', X - 5 + measure(`${GH.commits.Jelly}+`, { size: 168, font: F.semi, tracking: -0.05 }), 460);
 fits('clover caption', X + measure('modes, Java & Bedrock', { size: 22 }), 420);
 fits('Mes commits.', X + measure('Mes commits.', { size: 40, font: F.semi, tracking: -0.025 }), 400 - X);
 for (const [label] of COMMITS) fits(label, X + 48 + measure(label, { size: 19, font: F.semi }), 400 - X - 44);

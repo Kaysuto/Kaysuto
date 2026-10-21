@@ -1,6 +1,7 @@
 name: Stats GitHub
 
-# Refreshes the "Mon activité" card (assets/activity.svg) from the GitHub API, then commits it if it changed.
+# Refreshes the GitHub figures (cards "Mon activité", "Mes commits", Jelly) from the GitHub API, then commits them if they changed.
+# COMMITS_TOKEN (optional secret): a personal token that can read the private repositories counted on "Mes commits".
 on:
   schedule:
     - cron: '17 */6 * * *'
@@ -30,6 +31,7 @@ jobs:
       - run: npm run stats
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
       - run: npm run build
       - name: Commit if changed
         run: |

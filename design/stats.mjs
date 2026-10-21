@@ -1,7 +1,7 @@
-// Fetches the GitHub activity shown on the "Mon activité" card into data/github.json. Run: npm run stats
+// Fetches the GitHub figures of the "Mon activité" and "Mes commits" cards into data/github.json. Run: npm run stats
 // Needs a token in GITHUB_TOKEN (or GH_TOKEN): the Actions token is enough, it only reads public profile data.
 // Private contributions count in the calendar when "Private contributions" is enabled on the profile.
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
 const LOGIN = 'Kaysuto';
 const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
@@ -58,6 +58,30 @@ const data = {
   // The profile calendar for the heatmap: the last year, Sunday-first weeks, oldest first.
   weeks: user.contributionsCollection.contributionCalendar.weeks.map(w => w.contributionDays.map(d => d.contributionCount)),
 };
+// Commits authored per project, for the "Mes commits" card. Most repositories are private, so this needs a
+// personal token in COMMITS_TOKEN; a repository the token cannot read keeps its last known count.
+const PROJECTS = {
+  'Jelly': ['Kaysuto/playjelly'],
+  'Mirum Orbis': ['Kaysuto/mirum-orbis'],
+  'Clover Games': ['theclovergames/clovergames', 'theclovergames/clover-launcher', 'theclovergames/clover-bot', 'theclovergames/wiki', 'theclovergames/guide'],
+  'Guides & outils': ['Kaysuto/Kaysuto', 'Kaysuto/no-hello', 'Kaysuto/pelican-installation-fr', 'Kaysuto/pterodactyl-installation-fr', 'Kaysuto/rdp-windows11', 'Kaysuto/rename-mkv-track', 'Kaysuto/snake-profile', 'Kaysuto/spotify-discord-status'],
+  'Portfolio': ['Kaysuto/portfolio'],
+};
+const previous = (() => { try { return JSON.parse(readFileSync(new URL('./data/github.json', import.meta.url), 'utf8')).repoCommits ?? {}; } catch { return {}; } })();
+const repoToken = process.env.COMMITS_TOKEN || token;
+async function countCommits(repo) {
+  const res = await fetch(`https://api.github.com/repos/${repo}/commits?author=${LOGIN}&per_page=1`, {
+    headers: { authorization: `bearer ${repoToken}`, accept: 'application/vnd.github+json', 'user-agent': 'kaysuto-profile' },
+  });
+  if (!res.ok) return previous[repo] ?? 0;
+  const last = res.headers.get('link')?.match(/[?&]page=(\d+)>; rel="last"/);
+  return last ? Number(last[1]) : (await res.json()).length;
+}
+const repoCommits = {};
+for (const repo of Object.values(PROJECTS).flat()) repoCommits[repo] = await countCommits(repo);
+data.repoCommits = repoCommits;
+data.commits = Object.fromEntries(Object.entries(PROJECTS).map(([name, repos]) => [name, repos.reduce((n, r) => n + repoCommits[r], 0)]));
+
 mkdirSync(new URL('./data/', import.meta.url), { recursive: true });
 writeFileSync(new URL('./data/github.json', import.meta.url), `${JSON.stringify(data, null, 2)}\n`);
 console.log(`total ${data.total} · current ${data.current} · longest ${data.longest} · updated ${data.updated}`);
