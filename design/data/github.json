@@ -1,10 +1,10 @@
 {
   "updated": "2026-10-25",
-  "total": 2467,
+  "total": 2475,
   "since": "2020",
-  "current": 5,
+  "current": 6,
   "longest": 17,
-  "commitsThisYear": 400,
+  "commitsThisYear": 405,
   "pullRequests": 18,
   "stars": 6,
   "weeks": [
@@ -477,17 +477,17 @@
       5
     ],
     [
-      0
+      8
     ]
   ],
   "repoCommits": {
     "Kaysuto/playjelly": 748,
     "Kaysuto/mirum-orbis": 464,
-    "theclovergames/clovergames": 239,
-    "theclovergames/clover-launcher": 36,
-    "theclovergames/clover-bot": 37,
-    "theclovergames/wiki": 58,
-    "theclovergames/guide": 10,
+    "theclovergames/clovergames": 240,
+    "theclovergames/clover-launcher": 39,
+    "theclovergames/clover-bot": 38,
+    "theclovergames/wiki": 59,
+    "theclovergames/guide": 11,
     "Kaysuto/Kaysuto": 107,
     "Kaysuto/no-hello": 35,
     "Kaysuto/pelican-installation-fr": 83,
@@ -501,7 +501,7 @@
   "commits": {
     "Jelly": 748,
     "Mirum Orbis": 464,
-    "Clover Games": 380,
+    "Clover Games": 387,
     "Guides & outils": 284,
     "Portfolio": 162
   }
