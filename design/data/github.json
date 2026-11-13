@@ -489,7 +489,7 @@
     "Kaysuto/playjelly": 902,
     "Kaysuto/mirum-orbis": 464,
     "theclovergames/clovergames": 250,
-    "theclovergames/clover-launcher": 47,
+    "theclovergames/clover-launcher": 1,
     "theclovergames/clover-bot": 38,
     "theclovergames/wiki": 59,
     "theclovergames/guide": 11,
@@ -506,7 +506,7 @@
   "commits": {
     "Jelly": 902,
     "Mirum Orbis": 464,
-    "Clover Games": 405,
+    "Clover Games": 359,
     "Guides & outils": 284,
     "Portfolio": 162
   }
