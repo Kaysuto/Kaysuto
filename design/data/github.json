@@ -1,22 +1,13 @@
 {
-  "updated": "2026-11-13",
-  "total": 2797,
+  "updated": "2026-11-15",
+  "total": 2854,
   "since": "2020",
-  "current": 9,
+  "current": 11,
   "longest": 17,
-  "commitsThisYear": 442,
-  "pullRequests": 21,
+  "commitsThisYear": 475,
+  "pullRequests": 23,
   "stars": 6,
   "weeks": [
-    [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
     [
       0,
       0,
@@ -447,10 +438,10 @@
       2,
       1,
       15,
-      44
+      47
     ],
     [
-      4,
+      5,
       0,
       45,
       11,
@@ -474,7 +465,7 @@
       0,
       14,
       19,
-      8
+      11
     ],
     [
       2,
@@ -482,32 +473,36 @@
       13,
       2,
       14,
-      5
+      5,
+      40
+    ],
+    [
+      10
     ]
   ],
   "repoCommits": {
-    "Kaysuto/playjelly": 902,
+    "Kaysuto/playjelly": 910,
     "Kaysuto/mirum-orbis": 464,
     "theclovergames/clovergames": 250,
-    "theclovergames/clover-launcher": 1,
+    "theclovergames/clover-launcher": 60,
     "theclovergames/clover-bot": 38,
     "theclovergames/wiki": 59,
     "theclovergames/guide": 11,
     "Kaysuto/Kaysuto": 107,
-    "Kaysuto/no-hello": 35,
+    "Kaysuto/no-hello": 39,
     "Kaysuto/pelican-installation-fr": 83,
     "Kaysuto/pterodactyl-installation-fr": 21,
     "Kaysuto/rdp-windows11": 27,
     "Kaysuto/rename-mkv-track": 5,
     "Kaysuto/snake-profile": 1,
     "Kaysuto/spotify-discord-status": 5,
-    "Kaysuto/portfolio": 162
+    "Kaysuto/portfolio": 177
   },
   "commits": {
-    "Jelly": 902,
+    "Jelly": 910,
     "Mirum Orbis": 464,
-    "Clover Games": 359,
-    "Guides & outils": 284,
-    "Portfolio": 162
+    "Clover Games": 418,
+    "Guides & outils": 288,
+    "Portfolio": 177
   }
 }
