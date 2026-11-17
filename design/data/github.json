@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-16",
-  "total": 2881,
+  "updated": "2026-11-17",
+  "total": 2883,
   "since": "2020",
   "current": 12,
   "longest": 17,
@@ -478,11 +478,12 @@
     ],
     [
       34,
-      3
+      5,
+      0
     ]
   ],
   "repoCommits": {
-    "Kaysuto/playjelly": 920,
+    "Kaysuto/playjelly": 921,
     "Kaysuto/mirum-orbis": 464,
     "theclovergames/clovergames": 250,
     "theclovergames/clover-launcher": 60,
@@ -500,7 +501,7 @@
     "Kaysuto/portfolio": 177
   },
   "commits": {
-    "Jelly": 920,
+    "Jelly": 921,
     "Mirum Orbis": 464,
     "Clover Games": 418,
     "Guides & outils": 288,
