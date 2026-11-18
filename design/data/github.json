@@ -1,11 +1,11 @@
 {
   "updated": "2026-11-18",
-  "total": 2893,
+  "total": 2901,
   "since": "2020",
-  "current": 13,
+  "current": 14,
   "longest": 17,
-  "commitsThisYear": 477,
-  "pullRequests": 23,
+  "commitsThisYear": 479,
+  "pullRequests": 24,
   "stars": 6,
   "weeks": [
     [
@@ -480,11 +480,11 @@
       34,
       5,
       10,
-      0
+      8
     ]
   ],
   "repoCommits": {
-    "Kaysuto/playjelly": 926,
+    "Kaysuto/playjelly": 928,
     "Kaysuto/mirum-orbis": 464,
     "theclovergames/clovergames": 250,
     "theclovergames/clover-launcher": 60,
@@ -499,13 +499,13 @@
     "Kaysuto/rename-mkv-track": 5,
     "Kaysuto/snake-profile": 1,
     "Kaysuto/spotify-discord-status": 5,
-    "Kaysuto/portfolio": 178
+    "Kaysuto/portfolio": 180
   },
   "commits": {
-    "Jelly": 926,
+    "Jelly": 928,
     "Mirum Orbis": 464,
     "Clover Games": 418,
     "Guides & outils": 288,
-    "Portfolio": 178
+    "Portfolio": 180
   }
 }
