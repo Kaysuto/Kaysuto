@@ -1,11 +1,11 @@
 {
-  "updated": "2026-11-24",
-  "total": 3022,
+  "updated": "2026-11-25",
+  "total": 3039,
   "since": "2020",
-  "current": 20,
-  "longest": 20,
-  "commitsThisYear": 528,
-  "pullRequests": 65,
+  "current": 21,
+  "longest": 21,
+  "commitsThisYear": 533,
+  "pullRequests": 67,
   "stars": 6,
   "weeks": [
     [
@@ -479,32 +479,33 @@
     [
       13,
       3,
-      3
+      16,
+      4
     ]
   ],
   "repoCommits": {
-    "Kaysuto/playjelly": 938,
+    "Kaysuto/playjelly": 939,
     "Kaysuto/mirum-orbis": 470,
-    "theclovergames/clovergames": 250,
-    "theclovergames/clover-launcher": 60,
+    "theclovergames/clovergames": 251,
+    "theclovergames/clover-launcher": 61,
     "theclovergames/clover-bot": 38,
     "theclovergames/wiki": 59,
     "theclovergames/guide": 11,
     "Kaysuto/Kaysuto": 107,
-    "Kaysuto/no-hello": 39,
+    "Kaysuto/no-hello": 40,
     "Kaysuto/pelican-installation-fr": 83,
     "Kaysuto/pterodactyl-installation-fr": 21,
     "Kaysuto/rdp-windows11": 27,
     "Kaysuto/rename-mkv-track": 5,
     "Kaysuto/snake-profile": 1,
     "Kaysuto/spotify-discord-status": 5,
-    "Kaysuto/portfolio": 193
+    "Kaysuto/portfolio": 196
   },
   "commits": {
-    "Jelly": 938,
+    "Jelly": 939,
     "Mirum Orbis": 470,
-    "Clover Games": 418,
-    "Guides & outils": 288,
-    "Portfolio": 193
+    "Clover Games": 420,
+    "Guides & outils": 289,
+    "Portfolio": 196
   }
 }
