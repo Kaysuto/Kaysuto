@@ -1,11 +1,11 @@
 {
   "updated": "2026-11-27",
-  "total": 3055,
+  "total": 3059,
   "since": "2020",
   "current": 23,
   "longest": 23,
-  "commitsThisYear": 537,
-  "pullRequests": 68,
+  "commitsThisYear": 539,
+  "pullRequests": 69,
   "stars": 6,
   "weeks": [
     [
@@ -482,7 +482,7 @@
       16,
       16,
       2,
-      2
+      6
     ]
   ],
   "repoCommits": {
@@ -501,13 +501,13 @@
     "Kaysuto/rename-mkv-track": 5,
     "Kaysuto/snake-profile": 1,
     "Kaysuto/spotify-discord-status": 5,
-    "Kaysuto/portfolio": 200
+    "Kaysuto/portfolio": 202
   },
   "commits": {
     "Jelly": 943,
     "Mirum Orbis": 470,
     "Clover Games": 420,
     "Guides & outils": 289,
-    "Portfolio": 200
+    "Portfolio": 202
   }
 }
